@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+<!-- Google Analytics -->
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'true', 'auto');
+ga('send', 'pageview');
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+<!-- End Google Analytics -->
+
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>2020 geekgame(scuctf) Reverse出题思路&amp;writeup | Minhal&#39;s Blog | 不驰于空想，不骛于虚声</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="Reverse,CTF">
+    <meta name="description" content="2020 scuctf 如期举行，比赛也相当激烈。正好要写官方wp，顺便更新到博客吧。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2020 geekgame(scuctf) Reverse出题思路&amp;writeup">
+<meta property="og:url" content="https://minhal.me/2020/05/23/114514/index.html">
+<meta property="og:site_name" content="Minhal&#39;s Blog">
+<meta property="og:description" content="2020 scuctf 如期举行，比赛也相当激烈。正好要写官方wp，顺便更新到博客吧。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/loveminhal/myblog-picgo/blog/20200526001329.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/loveminhal/myblog-picgo/blog/20200526001330.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/loveminhal/myblog-picgo/blog/20200526001334.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/loveminhal/myblog-picgo/blog/20200526001331.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/loveminhal/myblog-picgo/blog/20200526001332.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/loveminhal/myblog-picgo/blog/20200526001333.jpg">
+<meta property="article:published_time" content="2020-05-23T01:11:27.000Z">
+<meta property="article:modified_time" content="2020-12-18T12:33:01.805Z">
+<meta property="article:author" content="Minhal">
+<meta property="article:tag" content="Reverse">
+<meta property="article:tag" content="CTF">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/loveminhal/myblog-picgo/blog/20200526001329.png">
+    
+        <link rel="alternate" type="application/atom+xml" title="Minhal&#39;s Blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.7.2">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Minhal</h5>
+          <a href="mailto:m@minhal.me" title="m@minhal.me" class="mail">m@minhal.me</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                Home
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/about"  >
+                <i class="icon icon-lg icon-About"></i>
+                About
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/link"  >
+                <i class="icon icon-lg icon-Link"></i>
+                Link
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/atom.xml"  >
+                <i class="icon icon-lg icon-RSS"></i>
+                RSS
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/loveminhal" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">2020 geekgame(scuctf) Reverse出题思路&amp;writeup</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">2020 geekgame(scuctf) Reverse出题思路&amp;writeup</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2020-05-23T01:11:27.000Z" itemprop="datePublished" class="page-time">
+  2020-05-23
+</time>
+
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#真正的签到"><span class="post-toc-number">1.</span> <span class="post-toc-text">真正的签到</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#出题思路"><span class="post-toc-number">1.1.</span> <span class="post-toc-text">出题思路</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#解题方法"><span class="post-toc-number">1.2.</span> <span class="post-toc-text">解题方法</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#法1"><span class="post-toc-number">1.2.1.</span> <span class="post-toc-text">法1</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#法2"><span class="post-toc-number">1.2.2.</span> <span class="post-toc-text">法2</span></a></li></ol></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#太空大战"><span class="post-toc-number">2.</span> <span class="post-toc-text">太空大战</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#出题思路-1"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">出题思路</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#解题方法-1"><span class="post-toc-number">2.2.</span> <span class="post-toc-text">解题方法</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#PY-交易"><span class="post-toc-number">3.</span> <span class="post-toc-text">PY 交易</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#出题思路-2"><span class="post-toc-number">3.1.</span> <span class="post-toc-text">出题思路</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#解题方法-2"><span class="post-toc-number">3.2.</span> <span class="post-toc-text">解题方法</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#法1-1"><span class="post-toc-number">3.2.1.</span> <span class="post-toc-text">法1</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#法2-1"><span class="post-toc-number">3.2.2.</span> <span class="post-toc-text">法2</span></a></li></ol></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#ONIbase64"><span class="post-toc-number">4.</span> <span class="post-toc-text">ONIbase64</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#出题思路-3"><span class="post-toc-number">4.1.</span> <span class="post-toc-text">出题思路</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#解题方法-3"><span class="post-toc-number">4.2.</span> <span class="post-toc-text">解题方法</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#easy-re-amp-easy-base"><span class="post-toc-number">5.</span> <span class="post-toc-text">easy_re&amp;easy_base</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#出题思路-4"><span class="post-toc-number">5.1.</span> <span class="post-toc-text">出题思路</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#解题方法-4"><span class="post-toc-number">5.2.</span> <span class="post-toc-text">解题方法</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#小结"><span class="post-toc-number">6.</span> <span class="post-toc-text">小结</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-114514"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">2020 geekgame(scuctf) Reverse出题思路&writeup</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2020-05-23 09:11:27" datetime="2020-05-23T01:11:27.000Z"  itemprop="datePublished">2020-05-23</time>
+
+            
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <p>2020 scuctf 如期举行，比赛也相当激烈。正好要写官方wp，顺便更新到博客吧。</p>
+<a id="more"></a>
+
+<h2 id="真正的签到"><a href="#真正的签到" class="headerlink" title="真正的签到"></a>真正的签到</h2><h3 id="出题思路"><a href="#出题思路" class="headerlink" title="出题思路"></a>出题思路</h3><p>本身作为签到题就没必要太刁难人，主要考察脱压缩壳（re选手基础技能），正好在4月的脱壳分享会也说了要出一道这种题。脱完壳后就打算搞个简单的加减乘除，但是还是出题时候考虑不周，出现了多解的情况。（按照正常思路一般都是一个解。）</p>
+<p>问题主要出在当时做了一个除法的操作，因为C语言中5/2 与4/2都为2。</p>
+<h3 id="解题方法"><a href="#解题方法" class="headerlink" title="解题方法"></a>解题方法</h3><h4 id="法1"><a href="#法1" class="headerlink" title="法1"></a>法1</h4><ul>
+<li><p>第一步，查壳，发现为upx。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/loveminhal/myblog-picgo/blog/20200526001329.png" alt="1"></p>
+</li>
+</ul>
+<ul>
+<li><p>直接可以用脱壳软件脱壳也可esp定律等手动脱壳。</p>
+</li>
+<li><p>脱壳后分析代码。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/loveminhal/myblog-picgo/blog/20200526001330.png" alt="2"></p>
+</li>
+<li><p>直接写脚本</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">  	<span class="keyword">char</span> fstr[<span class="number">17</span>] = <span class="string">"pbm`KkL`dKQ2KeJLd"</span>;</span><br><span class="line">  	<span class="keyword">char</span> theflag[<span class="number">17</span>];</span><br><span class="line">	<span class="keyword">char</span> flag[<span class="number">17</span>] = <span class="string">"scu_ctf_f4k3_f14g"</span>;	</span><br><span class="line">	<span class="keyword">int</span> i = <span class="number">0</span>;       </span><br><span class="line">    <span class="keyword">for</span>(i = <span class="number">0</span>; i &lt; <span class="number">17</span>; i++)</span><br><span class="line">    theflag[i] = fstr[i]*<span class="number">2</span>-flag[i]; </span><br><span class="line">    <span class="keyword">for</span>(i = <span class="number">0</span>; i &lt; <span class="number">17</span>; i++)</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"%c"</span>,theflag[i]);      </span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h4 id="法2"><a href="#法2" class="headerlink" title="法2"></a>法2</h4><ul>
+<li>前面步骤一直，后面直接angr梭哈</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> angr</span><br><span class="line">p = angr.Project(<span class="string">'sign.exe'</span>, auto_load_libs=<span class="literal">False</span>)</span><br><span class="line">st = p.factory.call_state(addr=<span class="number">0x401520</span>, add_options=angr.options.unicorn)</span><br><span class="line">sim = p.factory.simgr(st)</span><br><span class="line">sim.explore(find=<span class="number">0x40155e</span>, avoid=<span class="number">0x40156c</span>)</span><br><span class="line">print(sim.one_found.posix.dumps(<span class="number">0</span>))</span><br></pre></td></tr></table></figure>
+
+<p>这个地方就可以看出，有多解情况了。</p>
+<h2 id="太空大战"><a href="#太空大战" class="headerlink" title="太空大战"></a>太空大战</h2><h3 id="出题思路-1"><a href="#出题思路-1" class="headerlink" title="出题思路"></a>出题思路</h3><p>  这题是由God sun出的，大概主要考察一个.net，加之让比赛变的更有趣一点，放了个小游戏上去。只要打完180个灰机（一个不落）控制台就会输出flag</p>
+<p>  （180个飞机，无需逆向，轻轻松松就可以打败。</p>
+<h3 id="解题方法-1"><a href="#解题方法-1" class="headerlink" title="解题方法"></a>解题方法</h3><ul>
+<li>关键代码在assets/bin/Date/Managed/Assembly-CSharp.dll</li>
+<li>⽤.NET Reflector打开分析</li>
+</ul>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://cdn.jsdelivr.net/gh/loveminhal/myblog-picgo/blog/20200526001334.jpg" alt="3" title="">
+                </div>
+                <div class="image-caption">3</div>
+            </figure>
+
+<ul>
+<li><p>经过分析可以得知，每击落一架分级，调用一次这个关键方法。由代码可以看到总共需要摧毁了180个。（其实总共也就180个）</p>
+</li>
+<li><p>写解题脚本</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> hashlib</span><br><span class="line">mask =[<span class="number">49552</span>,<span class="number">26516</span>,<span class="number">15988</span>,<span class="number">29987</span>,<span class="number">52902</span>,<span class="number">33151</span>,<span class="number">8086</span>,<span class="number">39920</span>,<span class="number">3604</span>,<span class="number">21497</span>,<span class="number">19862</span>,<span class="number">12268</span>,<span class="number">50822</span>,<span class="number">26111</span>,<span class="number">35391</span>,<span class="number">20661</span>,<span class="number">6370</span>,<span class="number">14029</span>,<span class="number">26707</span>,<span class="number">42890</span>,<span class="number">19391</span>,<span class="number">13836</span>,<span class="number">61102</span>,<span class="number">38705</span>,<span class="number">45159</span>,<span class="number">12927</span>,<span class="number">47794</span>,<span class="number">39183</span>,<span class="number">20776</span>,<span class="number">44532</span>,<span class="number">18925</span>,<span class="number">4854</span>,<span class="number">60596</span>,<span class="number">11941</span>,<span class="number">28994</span>,<span class="number">11166</span>,<span class="number">57586</span>,<span class="number">48918</span>,<span class="number">13199</span>,<span class="number">42006</span>,<span class="number">62781</span>,<span class="number">31480</span>,<span class="number">50464</span>,<span class="number">53893</span>,<span class="number">21233</span>,<span class="number">61456</span>,<span class="number">55842</span>,<span class="number">46591</span>,<span class="number">10574</span>,<span class="number">45253</span>,<span class="number">50991</span>,<span class="number">44866</span>,<span class="number">45945</span>,<span class="number">17105</span>,<span class="number">27273</span>,<span class="number">18925</span>,<span class="number">41001</span>,<span class="number">64310</span>,<span class="number">51846</span>,<span class="number">46279</span>,<span class="number">14977</span>,<span class="number">61079</span>,<span class="number">26330</span>,<span class="number">1192</span>,<span class="number">61190</span>,<span class="number">38989</span>,<span class="number">36161</span>,<span class="number">17001</span>,<span class="number">38576</span>,<span class="number">49567</span>,<span class="number">55929</span>,<span class="number">31759</span>,<span class="number">54550</span>,<span class="number">12759</span>,<span class="number">13756</span>,<span class="number">60929</span>,<span class="number">36365</span>,<span class="number">27308</span>,<span class="number">57132</span>,<span class="number">42483</span>,<span class="number">42263</span>,<span class="number">57086</span>,<span class="number">55839</span>,<span class="number">13568</span>,<span class="number">37191</span>,<span class="number">18388</span>,<span class="number">34592</span>,<span class="number">4189</span>,<span class="number">65492</span>,<span class="number">24673</span>,<span class="number">27016</span>,<span class="number">6941</span>,<span class="number">33229</span>,	<span class="number">4180</span>,<span class="number">35454</span>,<span class="number">64874</span>,<span class="number">36708</span>,<span class="number">22948</span>]</span><br><span class="line">l = len(mask)</span><br><span class="line">secret = <span class="string">"jFEQ6xFkUxKGzUbn"</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>,<span class="number">181</span>):</span><br><span class="line">    secret = hashlib.md5((secret+str(mask[i%l])).encode()).hexdigest()</span><br><span class="line">    <span class="keyword">if</span> <span class="string">'6a37460f25c719a4'</span> <span class="keyword">in</span> secret:</span><br><span class="line">        <span class="keyword">print</span> (secret[<span class="number">0</span>:<span class="number">16</span>])</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>注意这里很多选手以为只调用一次，所以直接拿180%98 去处理，算出来的是错的。</p>
+</li>
+</ul>
+<h2 id="PY-交易"><a href="#PY-交易" class="headerlink" title="PY 交易"></a>PY 交易</h2><h3 id="出题思路-2"><a href="#出题思路-2" class="headerlink" title="出题思路"></a>出题思路</h3><p>这个题目出题主要想考察一下python的逆向，校内打校外比赛的不多，见得题目相对较少。所以本着拓宽学习的目的，出了这道还原字节码的题目。相对来说这道题不是太难，通过相关博客搜索，然后一步步分析还原，还原后dis检验。</p>
+<ul>
+<li>参考文章 <a href="https://bbs.pediy.com/thread-246683.htm" target="_blank" rel="noopener">https://bbs.pediy.com/thread-246683.htm</a></li>
+</ul>
+<h3 id="解题方法-2"><a href="#解题方法-2" class="headerlink" title="解题方法"></a>解题方法</h3><ul>
+<li><p>首先直接还原python代码就好了，还原结果如下</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">inputs = input(<span class="string">"please your flag:"</span>)</span><br><span class="line">inputs = inputs[<span class="number">7</span>:<span class="number">-1</span>]</span><br><span class="line">flag = <span class="string">"th31_scuctf_eXclus1v3"</span></span><br><span class="line">theflag = <span class="string">""</span></span><br><span class="line">i = <span class="number">0</span></span><br><span class="line">j =<span class="number">0</span> </span><br><span class="line">print(flag[<span class="number">0</span>])</span><br><span class="line"><span class="keyword">if</span>(len(flag) != len(inputs)):</span><br><span class="line">    print(<span class="string">"Error!"</span>)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>,len(flag)<span class="number">-14</span>):</span><br><span class="line">    theflag += (chr(ord(flag[i])+ord(inputs[i+<span class="number">8</span>])))</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">10</span>,len(flag)<span class="number">-6</span>):</span><br><span class="line">    theflag += (chr(ord(flag[i])+ord(inputs[i<span class="number">-8</span>])))</span><br><span class="line">    j = i+<span class="number">1</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(j,len(flag)):</span><br><span class="line">    theflag += (chr(ord(flag[i<span class="number">-3</span>])+ord(inputs[i])))</span><br><span class="line">flags =list(theflag)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>,len(flags)//<span class="number">2</span>):</span><br><span class="line">    flags[i] = chr(ord(flags[i])+<span class="number">20</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#Flag scuctf&#123;&#125;</span></span><br><span class="line"><span class="comment">#The flag text starts with "d1" and the eighth bit is "3"</span></span><br><span class="line">flagt = flags[len(flags)//<span class="number">2</span>:len(flags)]</span><br><span class="line">theflag = <span class="string">""</span>.join(flagt)</span><br><span class="line"><span class="keyword">for</span> k <span class="keyword">in</span> range(<span class="number">0</span>,len(flags)//<span class="number">2</span>):</span><br><span class="line">    theflag += <span class="string">""</span>.join(flags[k])</span><br><span class="line"><span class="keyword">if</span>(theflag == <span class="string">'×\x8bÙÍ\x8cÓÜî¤ú±¬¤¤úÖíÒ'</span>):</span><br><span class="line">    print(<span class="string">"You win!"</span>)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    print(<span class="string">"Error!!!"</span>)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>接着就是逆向分析，写解题脚本</p>
+</li>
+</ul>
+<h4 id="法1-1"><a href="#法1-1" class="headerlink" title="法1"></a>法1</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">enflag = <span class="string">'×\x8bÙÍ\x8cÓÜî¤ú±¬¤¤úÖíÒ'</span></span><br><span class="line">flag = <span class="string">'th31_scuctf_eXclus1v3'</span></span><br><span class="line">ans = <span class="string">'d1'</span> + <span class="string">'*'</span> * <span class="number">19</span></span><br><span class="line">step1 = enflag[<span class="number">9</span>:] + enflag[<span class="number">0</span>:<span class="number">9</span>]</span><br><span class="line">theflag =<span class="string">''</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>,<span class="number">9</span>):</span><br><span class="line">    theflag += chr(ord(step1[i]) - <span class="number">20</span>)</span><br><span class="line">theflag += step1[<span class="number">9</span>:]</span><br><span class="line">inputs = list(ans)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>,<span class="number">7</span>):</span><br><span class="line">    inputs[i + <span class="number">8</span>] = chr(ord(theflag[i]) - ord(flag[i]))</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">10</span>,<span class="number">15</span>):</span><br><span class="line">    inputs[i - <span class="number">8</span>] = chr(ord(theflag[i - <span class="number">3</span>]) - ord(flag[i]))</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">15</span>,<span class="number">21</span>):</span><br><span class="line">    inputs[i] = chr(ord(theflag[i - <span class="number">3</span>]) - ord(flag[i - <span class="number">3</span>]))</span><br><span class="line">inputs[<span class="number">7</span>] = <span class="string">'3'</span></span><br><span class="line">print(<span class="string">'scuctf&#123;'</span> + <span class="string">''</span>.join(inputs) + <span class="string">'&#125;'</span>)</span><br></pre></td></tr></table></figure>
+
+<h4 id="法2-1"><a href="#法2-1" class="headerlink" title="法2"></a>法2</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> z3 <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">flag = <span class="string">"th31_scuctf_eXclus1v3"</span></span><br><span class="line">dist = <span class="string">"×ÙÍÓÜî¤ú±¬¤¤úÖíÒ"</span></span><br><span class="line">inp = [BitVec((<span class="string">'x%s'</span> % i), <span class="number">8</span>) <span class="keyword">for</span> i <span class="keyword">in</span> range(len(flag))]</span><br><span class="line">theflag = []</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>, len(flag) - <span class="number">14</span>):</span><br><span class="line">    theflag.append(ord(flag[i]) + inp[i + <span class="number">8</span>])</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">10</span>, len(flag) - <span class="number">6</span>):</span><br><span class="line">    theflag.append(ord(flag[i]) + inp[i - <span class="number">8</span>])</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(len(flag) - <span class="number">6</span>, len(flag)):</span><br><span class="line">    theflag.append(ord(flag[i - <span class="number">3</span>]) + inp[i])</span><br><span class="line">flags = [_ <span class="keyword">for</span> _ <span class="keyword">in</span> theflag]</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(len(flags) // <span class="number">2</span>):</span><br><span class="line">    flags[i] = flags[i] + <span class="number">20</span></span><br><span class="line"></span><br><span class="line">theflag = theflag[len(flags) // <span class="number">2</span>:]</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(len(flags) // <span class="number">2</span>):</span><br><span class="line">    theflag.append(flags[i])</span><br><span class="line">solver = Solver()</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> zip(theflag, dist):</span><br><span class="line">    solver.append(i[<span class="number">0</span>] == ord(i[<span class="number">1</span>]))</span><br><span class="line">solver.check()</span><br><span class="line">model = solver.model()</span><br><span class="line"><span class="keyword">for</span> i, v <span class="keyword">in</span> enumerate(inp):</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        print(chr(model[v].as_long()), end=<span class="string">''</span>)</span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line">        print(<span class="string">' '</span>, end=<span class="string">''</span>)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>题目前两位和第八位无法解除，题目中已经提示具体字符</li>
+</ul>
+<h2 id="ONIbase64"><a href="#ONIbase64" class="headerlink" title="ONIbase64"></a>ONIbase64</h2><h3 id="出题思路-3"><a href="#出题思路-3" class="headerlink" title="出题思路"></a>出题思路</h3><p>本道题主要就是考察一个ollvm平坦化。也没想到这么惨烈。</p>
+<h3 id="解题方法-3"><a href="#解题方法-3" class="headerlink" title="解题方法"></a>解题方法</h3><ul>
+<li><p>文件拉到最后就可以看到编译器地址，直接把它pull下来，编译.s文件得到可执行文件。</p>
+</li>
+<li><p>拖入IDA分析，是个标准的平坦化。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/loveminhal/myblog-picgo/blog/20200526001331.png" alt="6"></p>
+</li>
+<li><p>参考&lt;<a href="https://github.com/pcy190/deflat" target="_blank" rel="noopener">https://github.com/pcy190/deflat</a> &gt;去除平坦化</p>
+</li>
+<li><p>然后直接F5写解密脚本</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> z3 <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">from</span> functools <span class="keyword">import</span> reduce</span><br><span class="line">table = <span class="string">'ZAnUX1W2oPNQ4sBMOd/+ChfGI5r8Hvt3uaLkbDgcyJYTipez6mxF0SEqRjVKwl97'</span></span><br><span class="line">coding = <span class="string">'5auRs6a4A2lEUObG5+uoPGuWHnimZLXtvkyEHxCFoal5'</span></span><br><span class="line">dist = map(<span class="keyword">lambda</span> x: BitVecVal(table.find(x), <span class="number">6</span>), coding)</span><br><span class="line">flag = [BitVec(<span class="string">'c%d'</span> % i, <span class="number">8</span>) <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">32</span>)]</span><br><span class="line">total = Concat(flag)</span><br><span class="line">s = [Extract(<span class="number">32</span> * (i + <span class="number">1</span>) - <span class="number">1</span>, <span class="number">32</span> * i, total) <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">8</span>)]</span><br><span class="line">temps = reduce(<span class="keyword">lambda</span> x, y: x ^ y, s, <span class="number">0</span>)</span><br><span class="line">s = [i ^ temps <span class="keyword">for</span> i <span class="keyword">in</span> s]</span><br><span class="line">s.reverse()</span><br><span class="line">total = Concat(s)</span><br><span class="line">bits = [Extract(<span class="number">8</span> * (i + <span class="number">1</span>) - <span class="number">1</span>, <span class="number">8</span> * i, total) <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">32</span>)]</span><br><span class="line">bits = bits + [reduce(<span class="keyword">lambda</span> x, y: x ^ y, bits)]</span><br><span class="line">tup = [bits[i:i + <span class="number">3</span>] <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>, len(bits), <span class="number">3</span>)]</span><br><span class="line">outs = []</span><br><span class="line">padding = BitVecVal(<span class="number">0</span>, <span class="number">2</span>)</span><br><span class="line"><span class="keyword">for</span> i, v <span class="keyword">in</span> enumerate(tup):</span><br><span class="line">    t = Concat(v)</span><br><span class="line">    s1 = Extract(<span class="number">23</span>, <span class="number">18</span>, t)</span><br><span class="line">    s2 = Extract(<span class="number">17</span>, <span class="number">12</span>, t)</span><br><span class="line">    s3 = Extract(<span class="number">11</span>, <span class="number">6</span>, t)</span><br><span class="line">    s4 = Extract(<span class="number">5</span>, <span class="number">0</span>, t)</span><br><span class="line">    outs.append(s1)</span><br><span class="line">    outs.append(s2)</span><br><span class="line">    outs.append(s3)</span><br><span class="line">    outs.append(s4)</span><br><span class="line">    <span class="keyword">for</span> v2 <span class="keyword">in</span> tup[i + <span class="number">1</span>:]:</span><br><span class="line">        v2[<span class="number">0</span>] = v2[<span class="number">0</span>] ^ Concat(padding, s1)</span><br><span class="line">        v2[<span class="number">1</span>] = v2[<span class="number">1</span>] ^ Concat(padding, s2)</span><br><span class="line">        v2[<span class="number">2</span>] = v2[<span class="number">2</span>] ^ Concat(padding, s3)</span><br><span class="line">solve = Solver()</span><br><span class="line"><span class="keyword">for</span> i, v <span class="keyword">in</span> enumerate(dist):</span><br><span class="line">    solve.add(outs[i] == v)</span><br><span class="line">solve.check()</span><br><span class="line">model = solve.model()</span><br><span class="line">print(<span class="string">''</span>.join(map(<span class="keyword">lambda</span> x: chr(model.eval(x, <span class="number">8</span>).as_long()),</span><br><span class="line">reversed(flag))))</span><br></pre></td></tr></table></figure>
+
+
+
+</li>
+</ul>
+<h2 id="easy-re-amp-easy-base"><a href="#easy-re-amp-easy-base" class="headerlink" title="easy_re&amp;easy_base"></a>easy_re&amp;easy_base</h2><h3 id="出题思路-4"><a href="#出题思路-4" class="headerlink" title="出题思路"></a>出题思路</h3><p>既然要搞花样，当然少不当今最火的iot。采用腾讯TencentOS tiny 官方定制IoT开发板EVB_LX(暂时是限量的)编译环境： <a href="https://github.com/Tencent/TencentOS-tiny" target="_blank" rel="noopener">https://github.com/Tencent/TencentOS-tiny</a>两个题目，都是考察找到被替换的base64密码表，由于考虑到直接上base有点难，所以出了一个easy_re过渡。</p>
+<p>两个题目替换都涉及四段字符如下（把初始密码表拆分为四段）：</p>
+<blockquote>
+<p>   “ABCDEFGHIJKLMNOPQRSTUVWXYZ”<br>   “abcdefghijklmnopqrstuvwxyz”<br>   “0123456789”<br>   “+/“</p>
+</blockquote>
+<p>easy_re是改变了这四段字符压栈顺序。没想到ida太过于智能化，显示结果即是正确压栈顺序。</p>
+<p>easy_base考察偏难了，主要是对这四段字符进行了一些变换，如果逆向分析的话需要学习risc-v指令集。</p>
+<p>当然，这两个题最简单的方法是把程序放入对应开发板里，他相应的串口也会输出字母表。</p>
+<p>做题过程中也发现一些选手拿到题目直接猜测arm架构，拿着ida 当arm分析，还原的内容是错的，无从下手。如果拿到文件后File一下也会知道是risc-v架构。不至于走偏。</p>
+<h3 id="解题方法-4"><a href="#解题方法-4" class="headerlink" title="解题方法"></a>解题方法</h3><ul>
+<li><p>首先，ida默认不支持risc-v，所以需要下载相关插件。<a href="https://github.com/lcq2/riscv-ida" target="_blank" rel="noopener">https://github.com/lcq2/riscv-ida</a></p>
+</li>
+<li><p>然后，ida打开分析，直接就有正确的字母表压栈顺序，（原本是想让选手分析简单指令来确定或者爆破）</p>
+<p><img src="https://cdn.jsdelivr.net/gh/loveminhal/myblog-picgo/blog/20200526001332.png" alt="4"></p>
+</li>
+<li><p>得到 字母表就很容易解出来了</p>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> base64</span><br><span class="line">str1 = <span class="string">"PalXPrhnOrLZT6PVQJ1oNr9dSqDVTbo=="</span></span><br><span class="line">string1 =</span><br><span class="line"><span class="string">"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ+/abcdefghijklmnopqrstuvwxyz"</span></span><br><span class="line">string2 =</span><br><span class="line"><span class="string">"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"</span></span><br><span class="line">print(base64.b64decode(str1.translate(str.maketrans(string1, string2))))</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>easy_base 的话就需要分析指令得出具体操作或者直接开发板跑一下得到输出</p>
+</li>
+<li><p>看到大多数人解题无果，比赛最后放出了一个risc-v 64位的附件（代码一样），通过docker跑即可得到table。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/loveminhal/myblog-picgo/blog/20200526001333.jpg" alt="5"></p>
+</li>
+<li><p>然后直接解密得到flag</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> base64</span><br><span class="line">str1 = <span class="string">"UoH+U/DJV/YlQdUOU94JPYxJgdHMUWK="</span></span><br><span class="line">string1 =</span><br><span class="line"><span class="string">"a0b1c2d3e4f5g6h7i8j9ZYXWVUTSRQPON+klmnopqrABCDEFGHIJKLM/stuvwxyz"</span></span><br><span class="line">string2 =</span><br><span class="line"><span class="string">"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"</span></span><br><span class="line">print(base64.b64decode(str1.translate(str.maketrans(string1, string2))))</span><br></pre></td></tr></table></figure>
+
+
+
+</li>
+</ul>
+<ul>
+<li>如果对题目感兴趣的，可以之后再研究。我附上题目主文件源代码</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"mcu_init.h"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"tos_k.h"</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> TASK_SIZE 1024</span></span><br><span class="line"><span class="keyword">k_task_t</span> k_task_task1;</span><br><span class="line"><span class="keyword">k_task_t</span> k_task_task2;</span><br><span class="line"><span class="keyword">uint8_t</span> k_task1_stk[TASK_SIZE];</span><br><span class="line"><span class="keyword">uint8_t</span> k_task2_stk[TASK_SIZE];</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> share = <span class="number">0xCBA7F9</span>;</span><br><span class="line"><span class="keyword">k_sem_t</span> sem;</span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">char</span> *scuctf_flag_base64=<span class="string">"UoH+U/DJV/YlQdUOU94JPYxJgdHMUWK="</span>;</span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">char</span> base64_right[<span class="number">65</span>]=<span class="string">""</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">scuctf_base64</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">char</span> base64_1[<span class="number">26</span>]=<span class="string">"ABCDEFGHIJKLMNOPQRSTUVWXYZ"</span>;</span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">char</span> base64_2[<span class="number">26</span>]=<span class="string">"abcdefghijklmnopqrstuvwxyz"</span>;</span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">char</span> base64_3[<span class="number">10</span>]=<span class="string">"0123456789"</span>;</span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">char</span> base64_4[<span class="number">2</span>]=<span class="string">"+/"</span>;</span><br><span class="line">	<span class="keyword">int</span> i=<span class="number">0</span>,j=<span class="number">0</span>,k=<span class="number">0</span>,q=<span class="number">25</span>,r=<span class="number">10</span>,n=<span class="number">0</span>;</span><br><span class="line">	<span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;<span class="number">20</span>;)</span><br><span class="line">	&#123;</span><br><span class="line">		base64_right[i]=base64_2[j];</span><br><span class="line">		j++;</span><br><span class="line">		base64_right[i+<span class="number">1</span>]=base64_3[k];</span><br><span class="line">		k++;</span><br><span class="line">		i+=<span class="number">2</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span>(i=<span class="number">20</span>;i&lt;<span class="number">33</span>;i++)</span><br><span class="line">	&#123;</span><br><span class="line">		base64_right[i]=base64_1[q];</span><br><span class="line">		q--;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span>(i=<span class="number">33</span>;i&lt;<span class="number">42</span>;i++)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span>(i==<span class="number">33</span>)</span><br><span class="line">		&#123;</span><br><span class="line">			base64_right[<span class="number">33</span>]=base64_4[<span class="number">0</span>];</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span></span><br><span class="line">		&#123;</span><br><span class="line">			base64_right[i]=base64_2[r];</span><br><span class="line">			r++;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span>(i=<span class="number">42</span>;i&lt;<span class="number">64</span>;i++)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span>(n&lt;<span class="number">13</span>)</span><br><span class="line">		&#123;</span><br><span class="line">			base64_right[i]=base64_1[n];</span><br><span class="line">			n++;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span></span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">if</span>(i==<span class="number">55</span>)</span><br><span class="line">			&#123;</span><br><span class="line">				base64_right[i]=base64_4[<span class="number">1</span>];</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">else</span></span><br><span class="line">			&#123;</span><br><span class="line">				base64_right[i]=base64_2[r];</span><br><span class="line">				r++;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">task1</span><span class="params">(<span class="keyword">void</span> *pdata)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> task_cnt1 = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"welcome scuctf from %s cnt: %d\n"</span>, __func__, task_cnt1++);</span><br><span class="line">        tos_sem_pend(&amp;sem, ~<span class="number">0U</span>);</span><br><span class="line">        gpio_bit_write(GPIOA, GPIO_PIN_7, share % <span class="number">2</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">task2</span><span class="params">(<span class="keyword">void</span> *pdata)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> task_cnt2 = <span class="number">0</span>;</span><br><span class="line">    scuctf_base64();</span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">        share++;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;<span class="number">5</span>; i++) &#123;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">"Where is scuctf_base64? %s cnt: %08x\n%s"</span>, __func__, task_cnt2--,base64_right);</span><br><span class="line">            tos_task_delay(<span class="number">50</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        tos_sem_post(&amp;sem);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span> </span>&#123;</span><br><span class="line">    board_init();</span><br><span class="line"></span><br><span class="line">    usart0_init(<span class="number">115200</span>);</span><br><span class="line"></span><br><span class="line">    tos_knl_init();</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    tos_task_create(&amp;k_task_task1, <span class="string">"task1"</span>, task1, <span class="literal">NULL</span>, <span class="number">3</span>, k_task1_stk, TASK_SIZE, <span class="number">0</span>);</span><br><span class="line">    tos_task_create(&amp;k_task_task2, <span class="string">"task2"</span>, task2, <span class="literal">NULL</span>, <span class="number">3</span>, k_task2_stk, TASK_SIZE, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">k_err_t</span> err = tos_sem_create(&amp;sem, <span class="number">1</span>);</span><br><span class="line">    <span class="keyword">if</span> (err != K_ERR_NONE) &#123;</span><br><span class="line">        <span class="keyword">goto</span> die;</span><br><span class="line">    &#125;</span><br><span class="line">    tos_knl_start();</span><br><span class="line">die:</span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">        <span class="keyword">asm</span>(<span class="string">"wfi;"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">int</span> _put_char(<span class="keyword">int</span> ch)</span><br><span class="line">&#123;</span><br><span class="line">    usart_data_transmit(USART0, (<span class="keyword">uint8_t</span>) ch );</span><br><span class="line">    <span class="keyword">while</span> (usart_flag_get(USART0, USART_FLAG_TBE)== RESET)&#123;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> ch;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>参考<a href="https://github.com/riscv/riscv-isa-manual/releases" target="_blank" rel="noopener">https://github.com/riscv/riscv-isa-manual/releases</a></li>
+</ul>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>由于是普通校赛，题目也没出过分难，个人感觉难以把握还算可以。这次题目主要也本着打破传统scuctf 常规题目，一丢丢小小的创新。 .NET，risc-v，ollvm，apk，python等。即使这些可能在全国ctf中是常见题目，但是感觉校内还是几乎没出的。比赛过程中也发生了很多趣味东西，比如第一题一题多解，flag设置时候多加了空格导致选手提交报错等好多问题。</p>
+<p>总之希望scuctf越来越有趣，参与人数越来越多吧！</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2020-12-18T12:33:01.805Z" itemprop="dateUpdated">2020-12-18 20:33:01</time>
+</span><br>
+
+
+        
+        转载请注明源链接:<a href="/2020/05/23/114514/" target="_blank" rel="external">https://minhal.me/2020/05/23/114514/</a>
+        
+    </div>
+    
+    <footer>
+        <a href="https://minhal.me">
+            <img src="/img/avatar.jpg" alt="Minhal">
+            Minhal
+        </a>
+    </footer>
+</blockquote>
+
+        
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CTF/" rel="tag">CTF</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Reverse/" rel="tag">Reverse</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://minhal.me/2020/05/23/114514/&title=《2020 geekgame(scuctf) Reverse出题思路&writeup》 — Minhal's Blog&pic=https://minhal.me/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://minhal.me/2020/05/23/114514/&title=《2020 geekgame(scuctf) Reverse出题思路&writeup》 — Minhal's Blog&source=2020 scuctf 如期举行，比赛也相当激烈。正好要写官方wp，顺便更新到博客吧。" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://minhal.me/2020/05/23/114514/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《2020 geekgame(scuctf) Reverse出题思路&writeup》 — Minhal's Blog&url=https://minhal.me/2020/05/23/114514/&via=https://minhal.me" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://minhal.me/2020/05/23/114514/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2020/06/02/RCTF-cipher/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">RCTF cipher</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2020/05/08/hexo-github-zeit-Blog/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">hexo+github+zeit Blog</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    <!-- Valine Comments -->
+    <div class="comments vcomment" id="comments"></div>
+    <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+    <script src="//unpkg.com/valine@latest/dist/Valine.min.js"></script>
+    <!-- Valine Comments script -->
+    <script>
+        var GUEST_INFO = ['nick','mail','link'];
+        var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+          return GUEST_INFO.indexOf(item) > -1
+        });
+        new Valine({
+            el: '#comments',
+            notify: 'false' == 'true',
+            verify: 'false' == 'true',
+            appId: "fX27pyodMr6rvD8LbSEysXd0-gzGzoHsz",
+            appKey: "fOIe1o8rcT6nMIlQqcvvt4SV",
+            avatar: "mm",
+            placeholder: "Just go go",
+            guest_info: guest_info.length == 0 ? GUEST_INFO : guest_info,
+            pageSize: "10"
+        })
+    </script>
+    <!-- Valine Comments end -->
+
+
+
+
+
+
+
+
+
+
+</article>
+
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        谢谢老板~
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="/img/wechat.png" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="/img/wechat.png" data-alipay="/img/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Minhal &copy; 2020</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://minhal.me/2020/05/23/114514/&title=《2020 geekgame(scuctf) Reverse出题思路&writeup》 — Minhal's Blog&pic=https://minhal.me/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://minhal.me/2020/05/23/114514/&title=《2020 geekgame(scuctf) Reverse出题思路&writeup》 — Minhal's Blog&source=2020 scuctf 如期举行，比赛也相当激烈。正好要写官方wp，顺便更新到博客吧。" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://minhal.me/2020/05/23/114514/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《2020 geekgame(scuctf) Reverse出题思路&writeup》 — Minhal's Blog&url=https://minhal.me/2020/05/23/114514/&via=https://minhal.me" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://minhal.me/2020/05/23/114514/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAK4AAACuCAAAAACKZ2kyAAABzElEQVR42u3awW7CMBAEUP7/p6nUW9UmzHiJSaXnUxQCfuFgeWf9eMTj+T2O7iTXv7979OkbBi4u7pj7PB3JxOeU/PrcgIuLu597Tkle4OiZ9pVe2HBxcW/GbTc9axsjXFzc/8VdW9qSggoXF/ee3KT4WYs82jtvq9VwcXEH3DYwveL6wnwXFxe35D7LkWyAkucXZ8fFxd3CbYuWc2JyfxLI4uLi7ucmU7aHM9qWbTQ7Li7uxdzkMER7oOr8mTYu+fEtXFzcjdz2KFUbdE4atH8sZLi4uBdz23JlrVE6D1Pq/xgXF3fMTQqY+WSjxautt3BxcQfcPCpt267zEggXF/dT3LZ9ki957YJYb7ZwcXE3cpMwNI828mMWdVmFi4t7GTc/QtEetliLQl78Ai4u7hZuHnq299vFLi+NcHFxr+a2cWceo+TxKC4u7j25a42TtTZMHsji4uJ+lpuPtchjUjg9kpUVFxf3rdx2QUleON/QrMWvuLi4e7jt4tUGIu2rvtgS4eLibuTOj0+1bdr8VQ/zXVxc3Btwk8hj0oJ980KGi4v7IW7SgMnbM9GBDFxc3I3cSbg5wdXlEy4u7hZuG5jOt0RtOxYXF3cj9ws1RwYcIQhhMAAAAABJRU5ErkJggg==" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+</script>
+
+<script src="/js/main.min.js?v=1.7.2"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.7.2" async></script>
+
+
+
+
+
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

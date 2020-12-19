@@ -2,14 +2,21 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://minhal.me/2020/05/23/geekgame(scuctf)/</loc>
+    <loc>https://minhal.me/2020/05/07/hello%20word%20-%20%E5%89%AF%E6%9C%AC/</loc>
     
-    <lastmod>2020-12-18</lastmod>
+    <lastmod>2020-12-19</lastmod>
     
   </url>
   
   <url>
     <loc>https://minhal.me/2020/05/07/hello%20word/</loc>
+    
+    <lastmod>2020-12-19</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://minhal.me/2020/05/23/geekgame(scuctf)/</loc>
     
     <lastmod>2020-12-18</lastmod>
     
@@ -60,7 +67,7 @@
 
   <url>
     <loc>https://minhal.me/</loc>
-    <lastmod>2020-12-18</lastmod>
+    <lastmod>2020-12-19</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -68,21 +75,28 @@
   
   <url>
     <loc>https://minhal.me/tags/Reverse/</loc>
-    <lastmod>2020-12-18</lastmod>
+    <lastmod>2020-12-19</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://minhal.me/tags/CTF/</loc>
-    <lastmod>2020-12-18</lastmod>
+    <lastmod>2020-12-19</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://minhal.me/tags/blog/</loc>
-    <lastmod>2020-12-18</lastmod>
+    <lastmod>2020-12-19</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://minhal.me/tags/android/</loc>
+    <lastmod>2020-12-19</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>

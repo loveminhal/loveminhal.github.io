@@ -116,7 +116,7 @@
     <link href="https://minhal.me/2020/05/07/hello%20word/"/>
     <id>https://minhal.me/2020/05/07/hello%20word/</id>
     <published>2020-05-07T02:56:00.000Z</published>
-    <updated>2020-12-18T12:28:32.273Z</updated>
+    <updated>2020-12-19T07:25:43.917Z</updated>
     
     <content type="html"><![CDATA[<blockquote><p>博客再次迁移！</p></blockquote><a id="more"></a>]]></content>
     
@@ -129,6 +129,29 @@
     </summary>
     
     
+    
+  </entry>
+  
+  <entry>
+    <title>Android Studio调试apk</title>
+    <link href="https://minhal.me/2020/05/07/hello%20word%20-%20%E5%89%AF%E6%9C%AC/"/>
+    <id>https://minhal.me/2020/05/07/hello%20word%20-%20%E5%89%AF%E6%9C%AC/</id>
+    <published>2020-05-07T02:56:00.000Z</published>
+    <updated>2020-12-19T07:27:37.686Z</updated>
+    
+    <content type="html"><![CDATA[<blockquote><p>最近在逆向一个某工程性的APK文件，由于加了一些混淆和其他原因，需要动态调试理解一些关键代码，于是搭建了android studio调试环境。</p></blockquote><a id="more"></a><p>APK的调试有很多方法，个人还是习惯Android Studio 配合JEB的伪代码来进行调试。</p><h2 id="反编译"><a href="#反编译" class="headerlink" title="反编译"></a>反编译</h2><p>首先需要使用工具反编译apk。</p><h3 id="Apktool"><a href="#Apktool" class="headerlink" title="Apktool"></a>Apktool</h3><p>可以直接用Apktool反编译 </p><p><img src="https://cdn.jsdelivr.net/gh/loveminhal/myblog-picgo/blog/20201219151801.png" alt="1"></p><p>也也可以通过Android Killer反编译（原理其实就是集成Apttool）</p><figure class="image-bubble">                <div class="img-lightbox">                    <div class="overlay"></div>                    <img src="https://cdn.jsdelivr.net/gh/loveminhal/myblog-picgo/blog/20201219151802.png" alt="2" title="">                </div>                <div class="image-caption">2</div>            </figure><p>还可以使用  <strong>java -jar apktool.jar d MyApp.apk</strong> 命令调用apktool。</p><p>Android Studio3.x已经自带反编译，所以可以直接导入。</p><figure class="image-bubble">                <div class="img-lightbox">                    <div class="overlay"></div>                    <img src="https://cdn.jsdelivr.net/gh/loveminhal/myblog-picgo/blog/20201219151803.png" alt="4" title="">                </div>                <div class="image-caption">4</div>            </figure><h2 id="导入Android-Studio"><a href="#导入Android-Studio" class="headerlink" title="导入Android Studio"></a>导入Android Studio</h2><p>如果没用自AS自带的反编译，可以选择<strong>Import Project</strong>导入</p><figure class="image-bubble">                <div class="img-lightbox">                    <div class="overlay"></div>                    <img src="https://cdn.jsdelivr.net/gh/loveminhal/myblog-picgo/blog/20201219151804.png" alt="3" title="">                </div>                <div class="image-caption">3</div>            </figure><p>一直选择“Next“。</p><h2 id="插件安装"><a href="#插件安装" class="headerlink" title="插件安装"></a>插件安装</h2><p>安装smaliidea插件，来对smali代码进行处理。</p><figure class="image-bubble">                <div class="img-lightbox">                    <div class="overlay"></div>                    <img src="https://cdn.jsdelivr.net/gh/loveminhal/myblog-picgo/blog/20201219151805.png" alt="5" title="">                </div>                <div class="image-caption">5</div>            </figure><h2 id="修改代码"><a href="#修改代码" class="headerlink" title="修改代码"></a>修改代码</h2><p>AndroidManifest.xml文件中在application中改为true(如果没有添加上)：</p><blockquote><p>​     <em>android:debuggable=”true”</em></p></blockquote><figure class="image-bubble">                <div class="img-lightbox">                    <div class="overlay"></div>                    <img src="https://cdn.jsdelivr.net/gh/loveminhal/myblog-picgo/blog/20201219151806.png" alt="6" title="">                </div>                <div class="image-caption">6</div>            </figure><h2 id="设置Sources-Root"><a href="#设置Sources-Root" class="headerlink" title="设置Sources Root"></a>设置Sources Root</h2><p> 在AndroidStudio工程中右键点击smali文件夹，设定Mark Directory as -&gt; Sources Root</p><figure class="image-bubble">                <div class="img-lightbox">                    <div class="overlay"></div>                    <img src="https://cdn.jsdelivr.net/gh/loveminhal/myblog-picgo/blog/20201219151807.png" alt="7" title="">                </div>                <div class="image-caption">7</div>            </figure><h2 id="重新编译"><a href="#重新编译" class="headerlink" title="重新编译"></a>重新编译</h2><p>如果之前改过代码，这步要重新编译签名程序。</p><p> <strong>java -jar apktool.jar b MyApp -o newMyApp.apk</strong></p><h2 id="启动DDMS"><a href="#启动DDMS" class="headerlink" title="启动DDMS"></a>启动DDMS</h2><p>启动DDMS，在Android Studio 3.x可能在tools菜单找不到DDMS，可以直接在terninal 输入 monitor启动。</p><p>打开后可能会遇到</p><figure class="image-bubble">                <div class="img-lightbox">                    <div class="overlay"></div>                    <img src="https://cdn.jsdelivr.net/gh/loveminhal/myblog-picgo/blog/20201219151808.png" alt="8" title="">                </div>                <div class="image-caption">8</div>            </figure><p>这个时候可以按照提示改下端口号。</p><figure class="image-bubble">                <div class="img-lightbox">                    <div class="overlay"></div>                    <img src="https://cdn.jsdelivr.net/gh/loveminhal/myblog-picgo/blog/20201219151809.png" alt="9" title="">                </div>                <div class="image-caption">9</div>            </figure><p>如果改了还不行可以先启动monitor，再打开Android Studio即可。</p><h2 id="配置调试"><a href="#配置调试" class="headerlink" title="配置调试"></a>配置调试</h2><p>在AndroidStudio里面配置远程调试的选项，选择Run -&gt; Edit Configurations</p><figure class="image-bubble">                <div class="img-lightbox">                    <div class="overlay"></div>                    <img src="https://cdn.jsdelivr.net/gh/loveminhal/myblog-picgo/blog/20201219151810.png" alt="10" title="">                </div>                <div class="image-caption">10</div>            </figure><p>然后选择加号新建一个远程调试</p><figure class="image-bubble">                <div class="img-lightbox">                    <div class="overlay"></div>                    <img src="https://cdn.jsdelivr.net/gh/loveminhal/myblog-picgo/blog/20201219151811.png" alt="11" title="">                </div>                <div class="image-caption">11</div>            </figure><p>然后进行配置</p><figure class="image-bubble">                <div class="img-lightbox">                    <div class="overlay"></div>                    <img src="https://cdn.jsdelivr.net/gh/loveminhal/myblog-picgo/blog/20201219151812.png" alt="12" title="">                </div>                <div class="image-caption">12</div>            </figure><h2 id="调试"><a href="#调试" class="headerlink" title="调试"></a>调试</h2><p>配置完成后即可调试，直接在想调试的地方下断点。在DDMS中选择要调试的程序。</p><figure class="image-bubble">                <div class="img-lightbox">                    <div class="overlay"></div>                    <img src="https://cdn.jsdelivr.net/gh/loveminhal/myblog-picgo/blog/20201219151813.png" alt="13" title="">                </div>                <div class="image-caption">13</div>            </figure><p>然后Run-&gt;Debug ‘name’来启动调试。</p><h2 id="模拟器连接"><a href="#模拟器连接" class="headerlink" title="模拟器连接"></a>模拟器连接</h2><p>如果通过模拟器来调试可以参考模拟器连接端口</p><ul><li>夜神模拟器：adb connect 127.0.0.1:62001</li><li>逍遥安卓模拟器：adb connect 127.0.0.1:21503</li><li>天天模拟器：adb connect 127.0.0.1:6555 </li><li>海马玩模拟器：adb connect 127.0.0.1:53001</li><li>网易MUMU模拟器：adb connect 127.0.0.1:7555</li><li>原生模拟器：adb connect (你的IP地址)：5555</li></ul>]]></content>
+    
+    <summary type="html">
+    
+      &lt;blockquote&gt;
+&lt;p&gt;最近在逆向一个某工程性的APK文件，由于加了一些混淆和其他原因，需要动态调试理解一些关键代码，于是搭建了android studio调试环境。&lt;/p&gt;
+&lt;/blockquote&gt;
+    
+    </summary>
+    
+    
+    
+      <category term="android" scheme="https://minhal.me/tags/android/"/>
     
   </entry>
   

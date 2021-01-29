@@ -133,7 +133,7 @@ body::before {
   width: 100%;
   height: 100%;
   z-index: -1;
-  background-image: url("/images/galaxy.jpg");
+  background-image: url("/images/galaxy1.jpg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -1667,7 +1667,7 @@ pre[class*='language-']:hover .copy-btn {
   left: 0;
   width: 20rem;
   background-color: #fff;
-  background-image: url("https://cdn.jsdelivr.net/gh/YunYouJun/cdn@master/img/bg/alpha-stars-timing-1.webp");
+  background-image: url("https://cdn.jsdelivr.net/gh/YunYouJun/cdn@master/img/bg/dark-alpha-stars-timing-1.webp");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: bottom 1rem center;
@@ -2004,7 +2004,7 @@ pre[class*='language-']:hover .copy-btn {
     color: var(--hty-text-color);
   }
   :root:not([data-user-color-scheme]) body::before {
-    background-image: url("/images/galaxy.jpg");
+    background-image: url("/images/galaxy2.jpg");
   }
   :root:not([data-user-color-scheme]) .char {
     background-color: rgba(0,0,0,0.5);
@@ -2015,7 +2015,7 @@ pre[class*='language-']:hover .copy-btn {
   }
   :root:not([data-user-color-scheme]) .sidebar {
     background-color: rgba(27,31,46,0.95);
-    background-image: none;
+    background-image: url("https://cdn.jsdelivr.net/gh/YunYouJun/cdn@master/img/bg/dark-alpha-stars-timing-1.webp");
   }
   :root:not([data-user-color-scheme]) .post-title-link {
     color: #3ca1ff;
@@ -2080,7 +2080,7 @@ pre[class*='language-']:hover .copy-btn {
   color: var(--hty-text-color);
 }
 [data-user-color-scheme='dark'] body::before {
-  background-image: url("/images/galaxy.jpg");
+  background-image: url("/images/galaxy2.jpg");
 }
 [data-user-color-scheme='dark'] .char {
   background-color: rgba(0,0,0,0.5);
@@ -2091,7 +2091,7 @@ pre[class*='language-']:hover .copy-btn {
 }
 [data-user-color-scheme='dark'] .sidebar {
   background-color: rgba(27,31,46,0.95);
-  background-image: none;
+  background-image: url("https://cdn.jsdelivr.net/gh/YunYouJun/cdn@master/img/bg/dark-alpha-stars-timing-1.webp");
 }
 [data-user-color-scheme='dark'] .post-title-link {
   color: #3ca1ff;

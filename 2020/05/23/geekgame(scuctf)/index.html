@@ -1,0 +1,452 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#0078E7"><meta name="author" content="Minhal"><meta name="copyright" content="Minhal"><meta name="generator" content="Hexo 5.3.0"><meta name="theme" content="hexo-theme-yun"><title>2020 geekgame(scuctf) Reverse出题思路&amp;writeup | Minhal's Blog</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@900&amp;display=swap" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/star-markdown-css@0.1.22/dist/yun/yun-markdown.min.css"><script src="//at.alicdn.com/t/font_1140697_ed8vp4atwoj.js" async></script><script src="https://cdn.jsdelivr.net/npm/scrollreveal/dist/scrollreveal.min.js" defer></script><script>document.addEventListener("DOMContentLoaded", () => {
+  [".post-card",".post-content img"].forEach((target)=> {
+    ScrollReveal().reveal(target);
+  })
+});
+</script><link id="light-prism-css" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.20.0/themes/prism.css" media="(prefers-color-scheme: light)"><link id="dark-prism-css" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.20.0/themes/prism-tomorrow.css" media="(prefers-color-scheme: dark)"><link rel="shortcut icon" type="image/svg+xml" href="/favicon.ico"><link rel="mask-icon" href="/favicon.ico" color="#0078E7"><link rel="alternate icon" href="/yun.ico"><link rel="preload" href="/css/hexo-theme-yun.css" as="style"><link rel="preload" href="/js/utils.js" as="script"><link rel="preload" href="/js/hexo-theme-yun.js" as="script"><link rel="prefetch" href="/js/sidebar.js" as="script"><link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><script id="yun-config">
+    const Yun = window.Yun || {};
+    window.CONFIG = {"hostname":"www.minhal.me","root":"/","title":["Minhal","の","Blog"],"version":"1.4.0","mode":"time","copycode":true,"page":{"isPost":true},"anonymous_image":"https://cdn.jsdelivr.net/gh/loveminhal/myblog-picgo/blog/20210130024808.jfif","local_search":{"path":"/search.xml"},"fireworks":{"colors":["102, 167, 221","62, 131, 225","33, 78, 194"]}};
+  </script><link rel="stylesheet" href="/css/hexo-theme-yun.css"><script src="/js/utils.js"></script><script src="/js/hexo-theme-yun.js"></script><link rel="alternate" href="/atom.xml" title="Minhal's Blog" type="application/atom+xml"><link rel="preconnect" href="https://www.google-analytics.com" crossorigin><script async src="https://www.googletagmanager.com/gtag/js?id=G-188448493"></script><script>if (CONFIG.hostname === location.hostname) {
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-188448493');
+}</script><script>(function(){
+  var bp = document.createElement('script');
+  var curProtocol = window.location.protocol.split(':')[0];
+  if (curProtocol === 'https') {
+    bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+  }
+  else {
+    bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+  }
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(bp, s);
+})();</script><meta name="description" content="2020 scuctf 如期举行，比赛也相当激烈。正好要写官方wp，顺便更新到博客吧。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2020 geekgame(scuctf) Reverse出题思路&amp;writeup">
+<meta property="og:url" content="https://www.minhal.me/2020/05/23/geekgame(scuctf)/index.html">
+<meta property="og:site_name" content="Minhal&#39;s Blog">
+<meta property="og:description" content="2020 scuctf 如期举行，比赛也相当激烈。正好要写官方wp，顺便更新到博客吧。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/loveminhal/myblog-picgo/blog/20200526001329.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/loveminhal/myblog-picgo/blog/20200526001330.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/loveminhal/myblog-picgo/blog/20200526001334.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/loveminhal/myblog-picgo/blog/20200526001331.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/loveminhal/myblog-picgo/blog/20200526001332.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/loveminhal/myblog-picgo/blog/20200526001333.jpg">
+<meta property="article:published_time" content="2020-05-23T01:11:27.000Z">
+<meta property="article:modified_time" content="2020-12-18T12:33:02.000Z">
+<meta property="article:author" content="Minhal">
+<meta property="article:tag" content="Reverse">
+<meta property="article:tag" content="CTF">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/loveminhal/myblog-picgo/blog/20200526001329.png"><script src="/js/ui/mode.js"></script></head><body><script defer src="https://cdn.jsdelivr.net/npm/animejs@latest"></script><script defer src="/js/ui/fireworks.js"></script><canvas class="fireworks"></canvas><div class="container"><a class="sidebar-toggle hty-icon-button" id="menu-btn"><div class="hamburger hamburger--spin" type="button"><span class="hamburger-box"><span class="hamburger-inner"></span></span></div></a><div class="sidebar-toggle sidebar-overlay"></div><aside class="sidebar"><script src="/js/sidebar.js"></script><ul class="sidebar-nav"><li class="sidebar-nav-item sidebar-nav-toc hty-icon-button sidebar-nav-active" data-target="post-toc-wrap" title="文章目录"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-list-ordered"></use></svg></li><li class="sidebar-nav-item sidebar-nav-overview hty-icon-button" data-target="site-overview-wrap" title="站点概览"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-passport-line"></use></svg></li></ul><div class="sidebar-panel" id="site-overview-wrap"><div class="site-info fix-top"><a class="site-author-avatar" href="/about/" title="Minhal"><img width="96" loading="lazy" src="/images/avatar.jpg" alt="Minhal"><span class="site-author-status" title="Looking for dawn.">🌑</span></a><div class="site-author-name"><a href="/about/">Minhal</a></div><a class="site-name" href="/about/site.html">Minhal's Blog</a><sub class="site-subtitle">不驰于空想，不骛于虚声</sub><div class="site-desciption">CTFer&Reverse&IoT</div></div><nav class="site-state"><a class="site-state-item hty-icon-button icon-home" href="/" title="首页"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-home-4-line"></use></svg></span></a><div class="site-state-item"><a href="/archives/" title="归档"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-archive-line"></use></svg></span><span class="site-state-item-count">9</span></a></div><div class="site-state-item"><a href="/tags/" title="标签"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag-3-line"></use></svg></span><span class="site-state-item-count">8</span></a></div><a class="site-state-item hty-icon-button" href="/links/" title="我的小伙伴们"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-user-line"></use></svg></span></a></nav><hr style="margin-bottom:0.5rem"><div class="links-of-author"><a class="links-of-author-item hty-icon-button" rel="noopener" href="/atom.xml" title="RSS" target="_blank" style="color:orange"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-rss-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://github.com/loveminhal" title="GitHub" target="_blank" style="color:#6e5494"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-github-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://www.zhihu.com/people/minhal" title="知乎" target="_blank" style="color:#0084FF"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-zhihu-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://twitter.com/BestMinhal" title="Twitter" target="_blank" style="color:#1da1f2"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-twitter-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://t.me/LoveMinhal" title="Telegram" target="_blank" style="color:#0088CC"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-telegram-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="mailto:m@minhal.me" title="E-Mail" target="_blank" style="color:#8E71C1"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-mail-line"></use></svg></a></div><br><a class="links-item hty-icon-button" id="toggle-mode-btn" href="javascript:;" title="Mode" style="color: #f1cb64"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-contrast-2-line"></use></svg></a></div><div class="sidebar-panel sidebar-panel-active" id="post-toc-wrap"><div class="post-toc"><div class="post-toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9C%9F%E6%AD%A3%E7%9A%84%E7%AD%BE%E5%88%B0"><span class="toc-number">1.</span> <span class="toc-text">真正的签到</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%BA%E9%A2%98%E6%80%9D%E8%B7%AF"><span class="toc-number">1.1.</span> <span class="toc-text">出题思路</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E9%A2%98%E6%96%B9%E6%B3%95"><span class="toc-number">1.2.</span> <span class="toc-text">解题方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B3%951"><span class="toc-number">1.2.1.</span> <span class="toc-text">法1</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B3%952"><span class="toc-number">1.2.2.</span> <span class="toc-text">法2</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%AA%E7%A9%BA%E5%A4%A7%E6%88%98"><span class="toc-number">2.</span> <span class="toc-text">太空大战</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%BA%E9%A2%98%E6%80%9D%E8%B7%AF-1"><span class="toc-number">2.1.</span> <span class="toc-text">出题思路</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E9%A2%98%E6%96%B9%E6%B3%95-1"><span class="toc-number">2.2.</span> <span class="toc-text">解题方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PY-%E4%BA%A4%E6%98%93"><span class="toc-number">3.</span> <span class="toc-text">PY 交易</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%BA%E9%A2%98%E6%80%9D%E8%B7%AF-2"><span class="toc-number">3.1.</span> <span class="toc-text">出题思路</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E9%A2%98%E6%96%B9%E6%B3%95-2"><span class="toc-number">3.2.</span> <span class="toc-text">解题方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B3%951-1"><span class="toc-number">3.2.1.</span> <span class="toc-text">法1</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B3%952-1"><span class="toc-number">3.2.2.</span> <span class="toc-text">法2</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ONIbase64"><span class="toc-number">4.</span> <span class="toc-text">ONIbase64</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%BA%E9%A2%98%E6%80%9D%E8%B7%AF-3"><span class="toc-number">4.1.</span> <span class="toc-text">出题思路</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E9%A2%98%E6%96%B9%E6%B3%95-3"><span class="toc-number">4.2.</span> <span class="toc-text">解题方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#easy-re-amp-easy-base"><span class="toc-number">5.</span> <span class="toc-text">easy_re&amp;easy_base</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%BA%E9%A2%98%E6%80%9D%E8%B7%AF-4"><span class="toc-number">5.1.</span> <span class="toc-text">出题思路</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E9%A2%98%E6%96%B9%E6%B3%95-4"><span class="toc-number">5.2.</span> <span class="toc-text">解题方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">6.</span> <span class="toc-text">小结</span></a></li></ol></div></div></div></aside><main class="sidebar-translate" id="content"><div id="post"><article class="post-block" itemscope itemtype="https://schema.org/Article"><link itemprop="mainEntityOfPage" href="https://www.minhal.me/2020/05/23/geekgame(scuctf)/"><span hidden itemprop="author" itemscope itemtype="https://schema.org/Person"><meta itemprop="name" content="Minhal"><meta itemprop="description"></span><span hidden itemprop="publisher" itemscope itemtype="https://schema.org/Organization"><meta itemprop="name" content="Minhal's Blog"></span><header class="post-header"><h1 class="post-title" itemprop="name headline">2020 geekgame(scuctf) Reverse出题思路&amp;writeup</h1><div class="post-meta"><div class="post-time" style="display:inline-block"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-calendar-line"></use></svg></span> <time title="创建时间：2020-05-23 09:11:27" itemprop="dateCreated datePublished" datetime="2020-05-23T09:11:27+08:00">2020-05-23</time><span class="post-meta-divider">-</span><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-calendar-2-line"></use></svg></span> <time title="修改时间：2020-12-18 20:33:02" itemprop="dateModified" datetime="2020-12-18T20:33:02+08:00">2020-12-18</time></div><div class="post-classify"><span class="post-tag"><a class="tag" href="/tags/Reverse/" style="--text-color:var(--hty-text-color)"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag-3-line"></use></svg></span><span class="tag-name">Reverse</span></a><a class="tag" href="/tags/CTF/" style="--text-color:#4fc08d"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag-3-line"></use></svg></span><span class="tag-name">CTF</span></a></span></div></div></header><section class="post-body" itemprop="articleBody"><div class="post-content markdown-body" style="--smc-primary:#0078E7;"><p>2020 scuctf 如期举行，比赛也相当激烈。正好要写官方wp，顺便更新到博客吧。</p>
+<a id="more"></a>
+
+<h2 id="真正的签到"><a href="#真正的签到" class="headerlink" title="真正的签到"></a>真正的签到</h2><h3 id="出题思路"><a href="#出题思路" class="headerlink" title="出题思路"></a>出题思路</h3><p>本身作为签到题就没必要太刁难人，主要考察脱压缩壳（re选手基础技能），正好在4月的脱壳分享会也说了要出一道这种题。脱完壳后就打算搞个简单的加减乘除，但是还是出题时候考虑不周，出现了多解的情况。（按照正常思路一般都是一个解。）</p>
+<p>问题主要出在当时做了一个除法的操作，因为C语言中5/2 与4/2都为2。</p>
+<h3 id="解题方法"><a href="#解题方法" class="headerlink" title="解题方法"></a>解题方法</h3><h4 id="法1"><a href="#法1" class="headerlink" title="法1"></a>法1</h4><ul>
+<li><p>第一步，查壳，发现为upx。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/loveminhal/myblog-picgo/blog/20200526001329.png" alt="1" loading="lazy"></p>
+</li>
+<li><p>直接可以用脱壳软件脱壳也可esp定律等手动脱壳。</p>
+</li>
+<li><p>脱壳后分析代码。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/loveminhal/myblog-picgo/blog/20200526001330.png" alt="2" loading="lazy"></p>
+</li>
+<li><p>直接写脚本</p>
+<pre class="language-c" data-language="c"><code class="language-c"><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span><span class="token string">&lt;stdio.h></span></span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span><span class="token string">&lt;string.h></span></span>
+<span class="token keyword">int</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+  	<span class="token keyword">char</span> fstr<span class="token punctuation">[</span><span class="token number">17</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token string">"pbm`KkL`dKQ2KeJLd"</span><span class="token punctuation">;</span>
+  	<span class="token keyword">char</span> theflag<span class="token punctuation">[</span><span class="token number">17</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+	<span class="token keyword">char</span> flag<span class="token punctuation">[</span><span class="token number">17</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token string">"scu_ctf_f4k3_f14g"</span><span class="token punctuation">;</span>	
+	<span class="token keyword">int</span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>       
+    <span class="token keyword">for</span><span class="token punctuation">(</span>i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> <span class="token number">17</span><span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span>
+    theflag<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">=</span> fstr<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token operator">*</span><span class="token number">2</span><span class="token operator">-</span>flag<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">;</span> 
+    <span class="token keyword">for</span><span class="token punctuation">(</span>i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> <span class="token number">17</span><span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span>
+    <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"%c"</span><span class="token punctuation">,</span>theflag<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>      
+  <span class="token punctuation">&#125;</span></code></pre>
+<h4 id="法2"><a href="#法2" class="headerlink" title="法2"></a>法2</h4></li>
+<li><p>前面步骤一直，后面直接angr梭哈</p>
+</li>
+</ul>
+<pre class="language-python" data-language="python"><code class="language-python"><span class="token keyword">import</span> angr
+p <span class="token operator">=</span> angr<span class="token punctuation">.</span>Project<span class="token punctuation">(</span><span class="token string">'sign.exe'</span><span class="token punctuation">,</span> auto_load_libs<span class="token operator">=</span><span class="token boolean">False</span><span class="token punctuation">)</span>
+st <span class="token operator">=</span> p<span class="token punctuation">.</span>factory<span class="token punctuation">.</span>call_state<span class="token punctuation">(</span>addr<span class="token operator">=</span><span class="token number">0x401520</span><span class="token punctuation">,</span> add_options<span class="token operator">=</span>angr<span class="token punctuation">.</span>options<span class="token punctuation">.</span>unicorn<span class="token punctuation">)</span>
+sim <span class="token operator">=</span> p<span class="token punctuation">.</span>factory<span class="token punctuation">.</span>simgr<span class="token punctuation">(</span>st<span class="token punctuation">)</span>
+sim<span class="token punctuation">.</span>explore<span class="token punctuation">(</span>find<span class="token operator">=</span><span class="token number">0x40155e</span><span class="token punctuation">,</span> avoid<span class="token operator">=</span><span class="token number">0x40156c</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>sim<span class="token punctuation">.</span>one_found<span class="token punctuation">.</span>posix<span class="token punctuation">.</span>dumps<span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">)</span></code></pre>
+<p>这个地方就可以看出，有多解情况了。</p>
+<h2 id="太空大战"><a href="#太空大战" class="headerlink" title="太空大战"></a>太空大战</h2><h3 id="出题思路-1"><a href="#出题思路-1" class="headerlink" title="出题思路"></a>出题思路</h3><p>  这题是由God sun出的，大概主要考察一个.net，加之让比赛变的更有趣一点，放了个小游戏上去。只要打完180个灰机（一个不落）控制台就会输出flag</p>
+<p>  （180个飞机，无需逆向，轻轻松松就可以打败。</p>
+<h3 id="解题方法-1"><a href="#解题方法-1" class="headerlink" title="解题方法"></a>解题方法</h3><ul>
+<li>关键代码在assets/bin/Date/Managed/Assembly-CSharp.dll</li>
+<li>⽤.NET Reflector打开分析</li>
+</ul>
+<p><img src="https://cdn.jsdelivr.net/gh/loveminhal/myblog-picgo/blog/20200526001334.jpg" alt="3" loading="lazy"></p>
+<ul>
+<li><p>经过分析可以得知，每击落一架分级，调用一次这个关键方法。由代码可以看到总共需要摧毁了180个。（其实总共也就180个）</p>
+</li>
+<li><p>写解题脚本</p>
+<pre class="language-python" data-language="python"><code class="language-python"><span class="token keyword">import</span> hashlib
+mask <span class="token operator">=</span><span class="token punctuation">[</span><span class="token number">49552</span><span class="token punctuation">,</span><span class="token number">26516</span><span class="token punctuation">,</span><span class="token number">15988</span><span class="token punctuation">,</span><span class="token number">29987</span><span class="token punctuation">,</span><span class="token number">52902</span><span class="token punctuation">,</span><span class="token number">33151</span><span class="token punctuation">,</span><span class="token number">8086</span><span class="token punctuation">,</span><span class="token number">39920</span><span class="token punctuation">,</span><span class="token number">3604</span><span class="token punctuation">,</span><span class="token number">21497</span><span class="token punctuation">,</span><span class="token number">19862</span><span class="token punctuation">,</span><span class="token number">12268</span><span class="token punctuation">,</span><span class="token number">50822</span><span class="token punctuation">,</span><span class="token number">26111</span><span class="token punctuation">,</span><span class="token number">35391</span><span class="token punctuation">,</span><span class="token number">20661</span><span class="token punctuation">,</span><span class="token number">6370</span><span class="token punctuation">,</span><span class="token number">14029</span><span class="token punctuation">,</span><span class="token number">26707</span><span class="token punctuation">,</span><span class="token number">42890</span><span class="token punctuation">,</span><span class="token number">19391</span><span class="token punctuation">,</span><span class="token number">13836</span><span class="token punctuation">,</span><span class="token number">61102</span><span class="token punctuation">,</span><span class="token number">38705</span><span class="token punctuation">,</span><span class="token number">45159</span><span class="token punctuation">,</span><span class="token number">12927</span><span class="token punctuation">,</span><span class="token number">47794</span><span class="token punctuation">,</span><span class="token number">39183</span><span class="token punctuation">,</span><span class="token number">20776</span><span class="token punctuation">,</span><span class="token number">44532</span><span class="token punctuation">,</span><span class="token number">18925</span><span class="token punctuation">,</span><span class="token number">4854</span><span class="token punctuation">,</span><span class="token number">60596</span><span class="token punctuation">,</span><span class="token number">11941</span><span class="token punctuation">,</span><span class="token number">28994</span><span class="token punctuation">,</span><span class="token number">11166</span><span class="token punctuation">,</span><span class="token number">57586</span><span class="token punctuation">,</span><span class="token number">48918</span><span class="token punctuation">,</span><span class="token number">13199</span><span class="token punctuation">,</span><span class="token number">42006</span><span class="token punctuation">,</span><span class="token number">62781</span><span class="token punctuation">,</span><span class="token number">31480</span><span class="token punctuation">,</span><span class="token number">50464</span><span class="token punctuation">,</span><span class="token number">53893</span><span class="token punctuation">,</span><span class="token number">21233</span><span class="token punctuation">,</span><span class="token number">61456</span><span class="token punctuation">,</span><span class="token number">55842</span><span class="token punctuation">,</span><span class="token number">46591</span><span class="token punctuation">,</span><span class="token number">10574</span><span class="token punctuation">,</span><span class="token number">45253</span><span class="token punctuation">,</span><span class="token number">50991</span><span class="token punctuation">,</span><span class="token number">44866</span><span class="token punctuation">,</span><span class="token number">45945</span><span class="token punctuation">,</span><span class="token number">17105</span><span class="token punctuation">,</span><span class="token number">27273</span><span class="token punctuation">,</span><span class="token number">18925</span><span class="token punctuation">,</span><span class="token number">41001</span><span class="token punctuation">,</span><span class="token number">64310</span><span class="token punctuation">,</span><span class="token number">51846</span><span class="token punctuation">,</span><span class="token number">46279</span><span class="token punctuation">,</span><span class="token number">14977</span><span class="token punctuation">,</span><span class="token number">61079</span><span class="token punctuation">,</span><span class="token number">26330</span><span class="token punctuation">,</span><span class="token number">1192</span><span class="token punctuation">,</span><span class="token number">61190</span><span class="token punctuation">,</span><span class="token number">38989</span><span class="token punctuation">,</span><span class="token number">36161</span><span class="token punctuation">,</span><span class="token number">17001</span><span class="token punctuation">,</span><span class="token number">38576</span><span class="token punctuation">,</span><span class="token number">49567</span><span class="token punctuation">,</span><span class="token number">55929</span><span class="token punctuation">,</span><span class="token number">31759</span><span class="token punctuation">,</span><span class="token number">54550</span><span class="token punctuation">,</span><span class="token number">12759</span><span class="token punctuation">,</span><span class="token number">13756</span><span class="token punctuation">,</span><span class="token number">60929</span><span class="token punctuation">,</span><span class="token number">36365</span><span class="token punctuation">,</span><span class="token number">27308</span><span class="token punctuation">,</span><span class="token number">57132</span><span class="token punctuation">,</span><span class="token number">42483</span><span class="token punctuation">,</span><span class="token number">42263</span><span class="token punctuation">,</span><span class="token number">57086</span><span class="token punctuation">,</span><span class="token number">55839</span><span class="token punctuation">,</span><span class="token number">13568</span><span class="token punctuation">,</span><span class="token number">37191</span><span class="token punctuation">,</span><span class="token number">18388</span><span class="token punctuation">,</span><span class="token number">34592</span><span class="token punctuation">,</span><span class="token number">4189</span><span class="token punctuation">,</span><span class="token number">65492</span><span class="token punctuation">,</span><span class="token number">24673</span><span class="token punctuation">,</span><span class="token number">27016</span><span class="token punctuation">,</span><span class="token number">6941</span><span class="token punctuation">,</span><span class="token number">33229</span><span class="token punctuation">,</span>	<span class="token number">4180</span><span class="token punctuation">,</span><span class="token number">35454</span><span class="token punctuation">,</span><span class="token number">64874</span><span class="token punctuation">,</span><span class="token number">36708</span><span class="token punctuation">,</span><span class="token number">22948</span><span class="token punctuation">]</span>
+l <span class="token operator">=</span> <span class="token builtin">len</span><span class="token punctuation">(</span>mask<span class="token punctuation">)</span>
+secret <span class="token operator">=</span> <span class="token string">"jFEQ6xFkUxKGzUbn"</span>
+
+<span class="token keyword">for</span> i <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span><span class="token number">181</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    secret <span class="token operator">=</span> hashlib<span class="token punctuation">.</span>md5<span class="token punctuation">(</span><span class="token punctuation">(</span>secret<span class="token operator">+</span><span class="token builtin">str</span><span class="token punctuation">(</span>mask<span class="token punctuation">[</span>i<span class="token operator">%</span>l<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">.</span>encode<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">.</span>hexdigest<span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token keyword">if</span> <span class="token string">'6a37460f25c719a4'</span> <span class="token keyword">in</span> secret<span class="token punctuation">:</span>
+        <span class="token keyword">print</span> <span class="token punctuation">(</span>secret<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">:</span><span class="token number">16</span><span class="token punctuation">]</span><span class="token punctuation">)</span></code></pre></li>
+<li><p>注意这里很多选手以为只调用一次，所以直接拿180%98 去处理，算出来的是错的。</p>
+</li>
+</ul>
+<h2 id="PY-交易"><a href="#PY-交易" class="headerlink" title="PY 交易"></a>PY 交易</h2><h3 id="出题思路-2"><a href="#出题思路-2" class="headerlink" title="出题思路"></a>出题思路</h3><p>这个题目出题主要想考察一下python的逆向，校内打校外比赛的不多，见得题目相对较少。所以本着拓宽学习的目的，出了这道还原字节码的题目。相对来说这道题不是太难，通过相关博客搜索，然后一步步分析还原，还原后dis检验。</p>
+<ul>
+<li>参考文章 <a target="_blank" rel="noopener" href="https://bbs.pediy.com/thread-246683.htm">https://bbs.pediy.com/thread-246683.htm</a></li>
+</ul>
+<h3 id="解题方法-2"><a href="#解题方法-2" class="headerlink" title="解题方法"></a>解题方法</h3><ul>
+<li><p>首先直接还原python代码就好了，还原结果如下</p>
+<pre class="language-python" data-language="python"><code class="language-python">inputs <span class="token operator">=</span> <span class="token builtin">input</span><span class="token punctuation">(</span><span class="token string">"please your flag:"</span><span class="token punctuation">)</span>
+inputs <span class="token operator">=</span> inputs<span class="token punctuation">[</span><span class="token number">7</span><span class="token punctuation">:</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span>
+flag <span class="token operator">=</span> <span class="token string">"th31_scuctf_eXclus1v3"</span>
+theflag <span class="token operator">=</span> <span class="token string">""</span>
+i <span class="token operator">=</span> <span class="token number">0</span>
+j <span class="token operator">=</span><span class="token number">0</span> 
+<span class="token keyword">print</span><span class="token punctuation">(</span>flag<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+<span class="token keyword">if</span><span class="token punctuation">(</span><span class="token builtin">len</span><span class="token punctuation">(</span>flag<span class="token punctuation">)</span> <span class="token operator">!=</span> <span class="token builtin">len</span><span class="token punctuation">(</span>inputs<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"Error!"</span><span class="token punctuation">)</span>
+<span class="token keyword">for</span> i <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span><span class="token builtin">len</span><span class="token punctuation">(</span>flag<span class="token punctuation">)</span><span class="token operator">-</span><span class="token number">14</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    theflag <span class="token operator">+=</span> <span class="token punctuation">(</span><span class="token builtin">chr</span><span class="token punctuation">(</span><span class="token builtin">ord</span><span class="token punctuation">(</span>flag<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token operator">+</span><span class="token builtin">ord</span><span class="token punctuation">(</span>inputs<span class="token punctuation">[</span>i<span class="token operator">+</span><span class="token number">8</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token keyword">for</span> i <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token number">10</span><span class="token punctuation">,</span><span class="token builtin">len</span><span class="token punctuation">(</span>flag<span class="token punctuation">)</span><span class="token operator">-</span><span class="token number">6</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    theflag <span class="token operator">+=</span> <span class="token punctuation">(</span><span class="token builtin">chr</span><span class="token punctuation">(</span><span class="token builtin">ord</span><span class="token punctuation">(</span>flag<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token operator">+</span><span class="token builtin">ord</span><span class="token punctuation">(</span>inputs<span class="token punctuation">[</span>i<span class="token operator">-</span><span class="token number">8</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+    j <span class="token operator">=</span> i<span class="token operator">+</span><span class="token number">1</span>
+<span class="token keyword">for</span> i <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span>j<span class="token punctuation">,</span><span class="token builtin">len</span><span class="token punctuation">(</span>flag<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    theflag <span class="token operator">+=</span> <span class="token punctuation">(</span><span class="token builtin">chr</span><span class="token punctuation">(</span><span class="token builtin">ord</span><span class="token punctuation">(</span>flag<span class="token punctuation">[</span>i<span class="token operator">-</span><span class="token number">3</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token operator">+</span><span class="token builtin">ord</span><span class="token punctuation">(</span>inputs<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+flags <span class="token operator">=</span><span class="token builtin">list</span><span class="token punctuation">(</span>theflag<span class="token punctuation">)</span>
+<span class="token keyword">for</span> i <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span><span class="token builtin">len</span><span class="token punctuation">(</span>flags<span class="token punctuation">)</span><span class="token operator">//</span><span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    flags<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token builtin">chr</span><span class="token punctuation">(</span><span class="token builtin">ord</span><span class="token punctuation">(</span>flags<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token operator">+</span><span class="token number">20</span><span class="token punctuation">)</span>
+
+<span class="token comment">#Flag scuctf&#123;&#125;</span>
+<span class="token comment">#The flag text starts with "d1" and the eighth bit is "3"</span>
+flagt <span class="token operator">=</span> flags<span class="token punctuation">[</span><span class="token builtin">len</span><span class="token punctuation">(</span>flags<span class="token punctuation">)</span><span class="token operator">//</span><span class="token number">2</span><span class="token punctuation">:</span><span class="token builtin">len</span><span class="token punctuation">(</span>flags<span class="token punctuation">)</span><span class="token punctuation">]</span>
+theflag <span class="token operator">=</span> <span class="token string">""</span><span class="token punctuation">.</span>join<span class="token punctuation">(</span>flagt<span class="token punctuation">)</span>
+<span class="token keyword">for</span> k <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span><span class="token builtin">len</span><span class="token punctuation">(</span>flags<span class="token punctuation">)</span><span class="token operator">//</span><span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    theflag <span class="token operator">+=</span> <span class="token string">""</span><span class="token punctuation">.</span>join<span class="token punctuation">(</span>flags<span class="token punctuation">[</span>k<span class="token punctuation">]</span><span class="token punctuation">)</span>
+<span class="token keyword">if</span><span class="token punctuation">(</span>theflag <span class="token operator">==</span> <span class="token string">'×\x8bÙÍ\x8cÓÜî¤ú±¬¤¤úÖíÒ'</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"You win!"</span><span class="token punctuation">)</span>
+<span class="token keyword">else</span><span class="token punctuation">:</span>
+    <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"Error!!!"</span><span class="token punctuation">)</span></code></pre></li>
+<li><p>接着就是逆向分析，写解题脚本</p>
+</li>
+</ul>
+<h4 id="法1-1"><a href="#法1-1" class="headerlink" title="法1"></a>法1</h4><pre class="language-python" data-language="python"><code class="language-python">enflag <span class="token operator">=</span> <span class="token string">'×\x8bÙÍ\x8cÓÜî¤ú±¬¤¤úÖíÒ'</span>
+flag <span class="token operator">=</span> <span class="token string">'th31_scuctf_eXclus1v3'</span>
+ans <span class="token operator">=</span> <span class="token string">'d1'</span> <span class="token operator">+</span> <span class="token string">'*'</span> <span class="token operator">*</span> <span class="token number">19</span>
+step1 <span class="token operator">=</span> enflag<span class="token punctuation">[</span><span class="token number">9</span><span class="token punctuation">:</span><span class="token punctuation">]</span> <span class="token operator">+</span> enflag<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">:</span><span class="token number">9</span><span class="token punctuation">]</span>
+theflag <span class="token operator">=</span><span class="token string">''</span>
+<span class="token keyword">for</span> i <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span><span class="token number">9</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    theflag <span class="token operator">+=</span> <span class="token builtin">chr</span><span class="token punctuation">(</span><span class="token builtin">ord</span><span class="token punctuation">(</span>step1<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token operator">-</span> <span class="token number">20</span><span class="token punctuation">)</span>
+theflag <span class="token operator">+=</span> step1<span class="token punctuation">[</span><span class="token number">9</span><span class="token punctuation">:</span><span class="token punctuation">]</span>
+inputs <span class="token operator">=</span> <span class="token builtin">list</span><span class="token punctuation">(</span>ans<span class="token punctuation">)</span>
+<span class="token keyword">for</span> i <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span><span class="token number">7</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    inputs<span class="token punctuation">[</span>i <span class="token operator">+</span> <span class="token number">8</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token builtin">chr</span><span class="token punctuation">(</span><span class="token builtin">ord</span><span class="token punctuation">(</span>theflag<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token operator">-</span> <span class="token builtin">ord</span><span class="token punctuation">(</span>flag<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token keyword">for</span> i <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token number">10</span><span class="token punctuation">,</span><span class="token number">15</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    inputs<span class="token punctuation">[</span>i <span class="token operator">-</span> <span class="token number">8</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token builtin">chr</span><span class="token punctuation">(</span><span class="token builtin">ord</span><span class="token punctuation">(</span>theflag<span class="token punctuation">[</span>i <span class="token operator">-</span> <span class="token number">3</span><span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token operator">-</span> <span class="token builtin">ord</span><span class="token punctuation">(</span>flag<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token keyword">for</span> i <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token number">15</span><span class="token punctuation">,</span><span class="token number">21</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    inputs<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token builtin">chr</span><span class="token punctuation">(</span><span class="token builtin">ord</span><span class="token punctuation">(</span>theflag<span class="token punctuation">[</span>i <span class="token operator">-</span> <span class="token number">3</span><span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token operator">-</span> <span class="token builtin">ord</span><span class="token punctuation">(</span>flag<span class="token punctuation">[</span>i <span class="token operator">-</span> <span class="token number">3</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+inputs<span class="token punctuation">[</span><span class="token number">7</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token string">'3'</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'scuctf&#123;'</span> <span class="token operator">+</span> <span class="token string">''</span><span class="token punctuation">.</span>join<span class="token punctuation">(</span>inputs<span class="token punctuation">)</span> <span class="token operator">+</span> <span class="token string">'&#125;'</span><span class="token punctuation">)</span></code></pre>
+<h4 id="法2-1"><a href="#法2-1" class="headerlink" title="法2"></a>法2</h4><pre class="language-python" data-language="python"><code class="language-python"><span class="token keyword">from</span> z3 <span class="token keyword">import</span> <span class="token operator">*</span>
+
+flag <span class="token operator">=</span> <span class="token string">"th31_scuctf_eXclus1v3"</span>
+dist <span class="token operator">=</span> <span class="token string">"×ÙÍÓÜî¤ú±¬¤¤úÖíÒ"</span>
+inp <span class="token operator">=</span> <span class="token punctuation">[</span>BitVec<span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token string">'x%s'</span> <span class="token operator">%</span> i<span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token number">8</span><span class="token punctuation">)</span> <span class="token keyword">for</span> i <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token builtin">len</span><span class="token punctuation">(</span>flag<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">]</span>
+theflag <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
+<span class="token keyword">for</span> i <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token builtin">len</span><span class="token punctuation">(</span>flag<span class="token punctuation">)</span> <span class="token operator">-</span> <span class="token number">14</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    theflag<span class="token punctuation">.</span>append<span class="token punctuation">(</span><span class="token builtin">ord</span><span class="token punctuation">(</span>flag<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token operator">+</span> inp<span class="token punctuation">[</span>i <span class="token operator">+</span> <span class="token number">8</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+<span class="token keyword">for</span> i <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token number">10</span><span class="token punctuation">,</span> <span class="token builtin">len</span><span class="token punctuation">(</span>flag<span class="token punctuation">)</span> <span class="token operator">-</span> <span class="token number">6</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    theflag<span class="token punctuation">.</span>append<span class="token punctuation">(</span><span class="token builtin">ord</span><span class="token punctuation">(</span>flag<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token operator">+</span> inp<span class="token punctuation">[</span>i <span class="token operator">-</span> <span class="token number">8</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+<span class="token keyword">for</span> i <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token builtin">len</span><span class="token punctuation">(</span>flag<span class="token punctuation">)</span> <span class="token operator">-</span> <span class="token number">6</span><span class="token punctuation">,</span> <span class="token builtin">len</span><span class="token punctuation">(</span>flag<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    theflag<span class="token punctuation">.</span>append<span class="token punctuation">(</span><span class="token builtin">ord</span><span class="token punctuation">(</span>flag<span class="token punctuation">[</span>i <span class="token operator">-</span> <span class="token number">3</span><span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token operator">+</span> inp<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span>
+flags <span class="token operator">=</span> <span class="token punctuation">[</span>_ <span class="token keyword">for</span> _ <span class="token keyword">in</span> theflag<span class="token punctuation">]</span>
+<span class="token keyword">for</span> i <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token builtin">len</span><span class="token punctuation">(</span>flags<span class="token punctuation">)</span> <span class="token operator">//</span> <span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    flags<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">=</span> flags<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">+</span> <span class="token number">20</span>
+
+theflag <span class="token operator">=</span> theflag<span class="token punctuation">[</span><span class="token builtin">len</span><span class="token punctuation">(</span>flags<span class="token punctuation">)</span> <span class="token operator">//</span> <span class="token number">2</span><span class="token punctuation">:</span><span class="token punctuation">]</span>
+<span class="token keyword">for</span> i <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token builtin">len</span><span class="token punctuation">(</span>flags<span class="token punctuation">)</span> <span class="token operator">//</span> <span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    theflag<span class="token punctuation">.</span>append<span class="token punctuation">(</span>flags<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span>
+solver <span class="token operator">=</span> Solver<span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token keyword">for</span> i <span class="token keyword">in</span> <span class="token builtin">zip</span><span class="token punctuation">(</span>theflag<span class="token punctuation">,</span> dist<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    solver<span class="token punctuation">.</span>append<span class="token punctuation">(</span>i<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">==</span> <span class="token builtin">ord</span><span class="token punctuation">(</span>i<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+solver<span class="token punctuation">.</span>check<span class="token punctuation">(</span><span class="token punctuation">)</span>
+model <span class="token operator">=</span> solver<span class="token punctuation">.</span>model<span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token keyword">for</span> i<span class="token punctuation">,</span> v <span class="token keyword">in</span> <span class="token builtin">enumerate</span><span class="token punctuation">(</span>inp<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token keyword">try</span><span class="token punctuation">:</span>
+        <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token builtin">chr</span><span class="token punctuation">(</span>model<span class="token punctuation">[</span>v<span class="token punctuation">]</span><span class="token punctuation">.</span>as_long<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">,</span> end<span class="token operator">=</span><span class="token string">''</span><span class="token punctuation">)</span>
+    <span class="token keyword">except</span><span class="token punctuation">:</span>
+        <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">' '</span><span class="token punctuation">,</span> end<span class="token operator">=</span><span class="token string">''</span><span class="token punctuation">)</span></code></pre>
+<ul>
+<li>题目前两位和第八位无法解除，题目中已经提示具体字符</li>
+</ul>
+<h2 id="ONIbase64"><a href="#ONIbase64" class="headerlink" title="ONIbase64"></a>ONIbase64</h2><h3 id="出题思路-3"><a href="#出题思路-3" class="headerlink" title="出题思路"></a>出题思路</h3><p>本道题主要就是考察一个ollvm平坦化。也没想到这么惨烈。</p>
+<h3 id="解题方法-3"><a href="#解题方法-3" class="headerlink" title="解题方法"></a>解题方法</h3><ul>
+<li><p>文件拉到最后就可以看到编译器地址，直接把它pull下来，编译.s文件得到可执行文件。</p>
+</li>
+<li><p>拖入IDA分析，是个标准的平坦化。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/loveminhal/myblog-picgo/blog/20200526001331.png" alt="6" loading="lazy"></p>
+</li>
+<li><p>参考&lt;<a target="_blank" rel="noopener" href="https://github.com/pcy190/deflat">https://github.com/pcy190/deflat</a> &gt;去除平坦化</p>
+</li>
+<li><p>然后直接F5写解密脚本</p>
+<pre class="language-python" data-language="python"><code class="language-python"><span class="token keyword">from</span> z3 <span class="token keyword">import</span> <span class="token operator">*</span>
+<span class="token keyword">from</span> functools <span class="token keyword">import</span> <span class="token builtin">reduce</span>
+table <span class="token operator">=</span> <span class="token string">'ZAnUX1W2oPNQ4sBMOd/+ChfGI5r8Hvt3uaLkbDgcyJYTipez6mxF0SEqRjVKwl97'</span>
+coding <span class="token operator">=</span> <span class="token string">'5auRs6a4A2lEUObG5+uoPGuWHnimZLXtvkyEHxCFoal5'</span>
+dist <span class="token operator">=</span> <span class="token builtin">map</span><span class="token punctuation">(</span><span class="token keyword">lambda</span> x<span class="token punctuation">:</span> BitVecVal<span class="token punctuation">(</span>table<span class="token punctuation">.</span>find<span class="token punctuation">(</span>x<span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token number">6</span><span class="token punctuation">)</span><span class="token punctuation">,</span> coding<span class="token punctuation">)</span>
+flag <span class="token operator">=</span> <span class="token punctuation">[</span>BitVec<span class="token punctuation">(</span><span class="token string">'c%d'</span> <span class="token operator">%</span> i<span class="token punctuation">,</span> <span class="token number">8</span><span class="token punctuation">)</span> <span class="token keyword">for</span> i <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token number">32</span><span class="token punctuation">)</span><span class="token punctuation">]</span>
+total <span class="token operator">=</span> Concat<span class="token punctuation">(</span>flag<span class="token punctuation">)</span>
+s <span class="token operator">=</span> <span class="token punctuation">[</span>Extract<span class="token punctuation">(</span><span class="token number">32</span> <span class="token operator">*</span> <span class="token punctuation">(</span>i <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">)</span> <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">32</span> <span class="token operator">*</span> i<span class="token punctuation">,</span> total<span class="token punctuation">)</span> <span class="token keyword">for</span> i <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token number">8</span><span class="token punctuation">)</span><span class="token punctuation">]</span>
+temps <span class="token operator">=</span> <span class="token builtin">reduce</span><span class="token punctuation">(</span><span class="token keyword">lambda</span> x<span class="token punctuation">,</span> y<span class="token punctuation">:</span> x <span class="token operator">^</span> y<span class="token punctuation">,</span> s<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span>
+s <span class="token operator">=</span> <span class="token punctuation">[</span>i <span class="token operator">^</span> temps <span class="token keyword">for</span> i <span class="token keyword">in</span> s<span class="token punctuation">]</span>
+s<span class="token punctuation">.</span>reverse<span class="token punctuation">(</span><span class="token punctuation">)</span>
+total <span class="token operator">=</span> Concat<span class="token punctuation">(</span>s<span class="token punctuation">)</span>
+bits <span class="token operator">=</span> <span class="token punctuation">[</span>Extract<span class="token punctuation">(</span><span class="token number">8</span> <span class="token operator">*</span> <span class="token punctuation">(</span>i <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">)</span> <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">8</span> <span class="token operator">*</span> i<span class="token punctuation">,</span> total<span class="token punctuation">)</span> <span class="token keyword">for</span> i <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token number">32</span><span class="token punctuation">)</span><span class="token punctuation">]</span>
+bits <span class="token operator">=</span> bits <span class="token operator">+</span> <span class="token punctuation">[</span><span class="token builtin">reduce</span><span class="token punctuation">(</span><span class="token keyword">lambda</span> x<span class="token punctuation">,</span> y<span class="token punctuation">:</span> x <span class="token operator">^</span> y<span class="token punctuation">,</span> bits<span class="token punctuation">)</span><span class="token punctuation">]</span>
+tup <span class="token operator">=</span> <span class="token punctuation">[</span>bits<span class="token punctuation">[</span>i<span class="token punctuation">:</span>i <span class="token operator">+</span> <span class="token number">3</span><span class="token punctuation">]</span> <span class="token keyword">for</span> i <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token builtin">len</span><span class="token punctuation">(</span>bits<span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token number">3</span><span class="token punctuation">)</span><span class="token punctuation">]</span>
+outs <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
+padding <span class="token operator">=</span> BitVecVal<span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">2</span><span class="token punctuation">)</span>
+<span class="token keyword">for</span> i<span class="token punctuation">,</span> v <span class="token keyword">in</span> <span class="token builtin">enumerate</span><span class="token punctuation">(</span>tup<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    t <span class="token operator">=</span> Concat<span class="token punctuation">(</span>v<span class="token punctuation">)</span>
+    s1 <span class="token operator">=</span> Extract<span class="token punctuation">(</span><span class="token number">23</span><span class="token punctuation">,</span> <span class="token number">18</span><span class="token punctuation">,</span> t<span class="token punctuation">)</span>
+    s2 <span class="token operator">=</span> Extract<span class="token punctuation">(</span><span class="token number">17</span><span class="token punctuation">,</span> <span class="token number">12</span><span class="token punctuation">,</span> t<span class="token punctuation">)</span>
+    s3 <span class="token operator">=</span> Extract<span class="token punctuation">(</span><span class="token number">11</span><span class="token punctuation">,</span> <span class="token number">6</span><span class="token punctuation">,</span> t<span class="token punctuation">)</span>
+    s4 <span class="token operator">=</span> Extract<span class="token punctuation">(</span><span class="token number">5</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> t<span class="token punctuation">)</span>
+    outs<span class="token punctuation">.</span>append<span class="token punctuation">(</span>s1<span class="token punctuation">)</span>
+    outs<span class="token punctuation">.</span>append<span class="token punctuation">(</span>s2<span class="token punctuation">)</span>
+    outs<span class="token punctuation">.</span>append<span class="token punctuation">(</span>s3<span class="token punctuation">)</span>
+    outs<span class="token punctuation">.</span>append<span class="token punctuation">(</span>s4<span class="token punctuation">)</span>
+    <span class="token keyword">for</span> v2 <span class="token keyword">in</span> tup<span class="token punctuation">[</span>i <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">:</span><span class="token punctuation">]</span><span class="token punctuation">:</span>
+        v2<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">=</span> v2<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">^</span> Concat<span class="token punctuation">(</span>padding<span class="token punctuation">,</span> s1<span class="token punctuation">)</span>
+        v2<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">=</span> v2<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">^</span> Concat<span class="token punctuation">(</span>padding<span class="token punctuation">,</span> s2<span class="token punctuation">)</span>
+        v2<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span> <span class="token operator">=</span> v2<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span> <span class="token operator">^</span> Concat<span class="token punctuation">(</span>padding<span class="token punctuation">,</span> s3<span class="token punctuation">)</span>
+solve <span class="token operator">=</span> Solver<span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token keyword">for</span> i<span class="token punctuation">,</span> v <span class="token keyword">in</span> <span class="token builtin">enumerate</span><span class="token punctuation">(</span>dist<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    solve<span class="token punctuation">.</span>add<span class="token punctuation">(</span>outs<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">==</span> v<span class="token punctuation">)</span>
+solve<span class="token punctuation">.</span>check<span class="token punctuation">(</span><span class="token punctuation">)</span>
+model <span class="token operator">=</span> solve<span class="token punctuation">.</span>model<span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">''</span><span class="token punctuation">.</span>join<span class="token punctuation">(</span><span class="token builtin">map</span><span class="token punctuation">(</span><span class="token keyword">lambda</span> x<span class="token punctuation">:</span> <span class="token builtin">chr</span><span class="token punctuation">(</span>model<span class="token punctuation">.</span><span class="token builtin">eval</span><span class="token punctuation">(</span>x<span class="token punctuation">,</span> <span class="token number">8</span><span class="token punctuation">)</span><span class="token punctuation">.</span>as_long<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+<span class="token builtin">reversed</span><span class="token punctuation">(</span>flag<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span></code></pre></li>
+</ul>
+<h2 id="easy-re-amp-easy-base"><a href="#easy-re-amp-easy-base" class="headerlink" title="easy_re&amp;easy_base"></a>easy_re&amp;easy_base</h2><h3 id="出题思路-4"><a href="#出题思路-4" class="headerlink" title="出题思路"></a>出题思路</h3><p>既然要搞花样，当然少不当今最火的iot。采用腾讯TencentOS tiny 官方定制IoT开发板EVB_LX(暂时是限量的)编译环境： <a target="_blank" rel="noopener" href="https://github.com/Tencent/TencentOS-tiny">https://github.com/Tencent/TencentOS-tiny</a>两个题目，都是考察找到被替换的base64密码表，由于考虑到直接上base有点难，所以出了一个easy_re过渡。</p>
+<p>两个题目替换都涉及四段字符如下（把初始密码表拆分为四段）：</p>
+<blockquote>
+<p>   “ABCDEFGHIJKLMNOPQRSTUVWXYZ”<br>   “abcdefghijklmnopqrstuvwxyz”<br>   “0123456789”<br>   “+/“</p>
+</blockquote>
+<p>easy_re是改变了这四段字符压栈顺序。没想到ida太过于智能化，显示结果即是正确压栈顺序。</p>
+<p>easy_base考察偏难了，主要是对这四段字符进行了一些变换，如果逆向分析的话需要学习risc-v指令集。</p>
+<p>当然，这两个题最简单的方法是把程序放入对应开发板里，他相应的串口也会输出字母表。</p>
+<p>做题过程中也发现一些选手拿到题目直接猜测arm架构，拿着ida 当arm分析，还原的内容是错的，无从下手。如果拿到文件后File一下也会知道是risc-v架构。不至于走偏。</p>
+<h3 id="解题方法-4"><a href="#解题方法-4" class="headerlink" title="解题方法"></a>解题方法</h3><ul>
+<li><p>首先，ida默认不支持risc-v，所以需要下载相关插件。<a target="_blank" rel="noopener" href="https://github.com/lcq2/riscv-ida">https://github.com/lcq2/riscv-ida</a></p>
+</li>
+<li><p>然后，ida打开分析，直接就有正确的字母表压栈顺序，（原本是想让选手分析简单指令来确定或者爆破）</p>
+<p><img src="https://cdn.jsdelivr.net/gh/loveminhal/myblog-picgo/blog/20200526001332.png" alt="4" loading="lazy"></p>
+</li>
+<li><p>得到 字母表就很容易解出来了</p>
+</li>
+</ul>
+<pre class="language-python" data-language="python"><code class="language-python"><span class="token keyword">import</span> base64
+str1 <span class="token operator">=</span> <span class="token string">"PalXPrhnOrLZT6PVQJ1oNr9dSqDVTbo=="</span>
+string1 <span class="token operator">=</span>
+<span class="token string">"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ+/abcdefghijklmnopqrstuvwxyz"</span>
+string2 <span class="token operator">=</span>
+<span class="token string">"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>base64<span class="token punctuation">.</span>b64decode<span class="token punctuation">(</span>str1<span class="token punctuation">.</span>translate<span class="token punctuation">(</span><span class="token builtin">str</span><span class="token punctuation">.</span>maketrans<span class="token punctuation">(</span>string1<span class="token punctuation">,</span> string2<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span></code></pre>
+<ul>
+<li><p>easy_base 的话就需要分析指令得出具体操作或者直接开发板跑一下得到输出</p>
+</li>
+<li><p>看到大多数人解题无果，比赛最后放出了一个risc-v 64位的附件（代码一样），通过docker跑即可得到table。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/loveminhal/myblog-picgo/blog/20200526001333.jpg" alt="5" loading="lazy"></p>
+</li>
+<li><p>然后直接解密得到flag</p>
+<pre class="language-python" data-language="python"><code class="language-python"><span class="token keyword">import</span> base64
+str1 <span class="token operator">=</span> <span class="token string">"UoH+U/DJV/YlQdUOU94JPYxJgdHMUWK="</span>
+string1 <span class="token operator">=</span>
+<span class="token string">"a0b1c2d3e4f5g6h7i8j9ZYXWVUTSRQPON+klmnopqrABCDEFGHIJKLM/stuvwxyz"</span>
+string2 <span class="token operator">=</span>
+<span class="token string">"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>base64<span class="token punctuation">.</span>b64decode<span class="token punctuation">(</span>str1<span class="token punctuation">.</span>translate<span class="token punctuation">(</span><span class="token builtin">str</span><span class="token punctuation">.</span>maketrans<span class="token punctuation">(</span>string1<span class="token punctuation">,</span> string2<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span></code></pre></li>
+</ul>
+<ul>
+<li>如果对题目感兴趣的，可以之后再研究。我附上题目主文件源代码</li>
+</ul>
+<pre class="language-C" data-language="C"><code class="language-C">#include &quot;mcu_init.h&quot;
+#include &quot;tos_k.h&quot;
+
+#define TASK_SIZE 1024
+k_task_t k_task_task1;
+k_task_t k_task_task2;
+uint8_t k_task1_stk[TASK_SIZE];
+uint8_t k_task2_stk[TASK_SIZE];
+
+int share &#x3D; 0xCBA7F9;
+k_sem_t sem;
+unsigned char *scuctf_flag_base64&#x3D;&quot;UoH+U&#x2F;DJV&#x2F;YlQdUOU94JPYxJgdHMUWK&#x3D;&quot;;
+unsigned char base64_right[65]&#x3D;&quot;&quot;;
+
+void scuctf_base64(void)
+&#123;
+	unsigned char base64_1[26]&#x3D;&quot;ABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;;
+	unsigned char base64_2[26]&#x3D;&quot;abcdefghijklmnopqrstuvwxyz&quot;;
+	unsigned char base64_3[10]&#x3D;&quot;0123456789&quot;;
+	unsigned char base64_4[2]&#x3D;&quot;+&#x2F;&quot;;
+	int i&#x3D;0,j&#x3D;0,k&#x3D;0,q&#x3D;25,r&#x3D;10,n&#x3D;0;
+	for(i&#x3D;0;i&lt;20;)
+	&#123;
+		base64_right[i]&#x3D;base64_2[j];
+		j++;
+		base64_right[i+1]&#x3D;base64_3[k];
+		k++;
+		i+&#x3D;2;
+	&#125;
+	for(i&#x3D;20;i&lt;33;i++)
+	&#123;
+		base64_right[i]&#x3D;base64_1[q];
+		q--;
+	&#125;
+	for(i&#x3D;33;i&lt;42;i++)
+	&#123;
+		if(i&#x3D;&#x3D;33)
+		&#123;
+			base64_right[33]&#x3D;base64_4[0];
+		&#125;
+		else
+		&#123;
+			base64_right[i]&#x3D;base64_2[r];
+			r++;
+		&#125;
+	&#125;
+	for(i&#x3D;42;i&lt;64;i++)
+	&#123;
+		if(n&lt;13)
+		&#123;
+			base64_right[i]&#x3D;base64_1[n];
+			n++;
+		&#125;
+		else
+		&#123;
+			if(i&#x3D;&#x3D;55)
+			&#123;
+				base64_right[i]&#x3D;base64_4[1];
+			&#125;
+			else
+			&#123;
+				base64_right[i]&#x3D;base64_2[r];
+				r++;
+			&#125;
+		&#125;
+	&#125;
+&#125;
+
+void task1(void *pdata)
+&#123;
+    int task_cnt1 &#x3D; 0;
+    while (1) &#123;
+        printf(&quot;welcome scuctf from %s cnt: %d\n&quot;, __func__, task_cnt1++);
+        tos_sem_pend(&amp;sem, ~0U);
+        gpio_bit_write(GPIOA, GPIO_PIN_7, share % 2);
+    &#125;
+
+&#125;
+
+void task2(void *pdata)
+&#123;
+    int task_cnt2 &#x3D; 0;
+    scuctf_base64();
+    while (1) &#123;
+        share++;
+        for(int i&#x3D;0; i&lt;5; i++) &#123;
+            printf(&quot;Where is scuctf_base64? %s cnt: %08x\n%s&quot;, __func__, task_cnt2--,base64_right);
+            tos_task_delay(50);
+        &#125;
+        tos_sem_post(&amp;sem);
+    &#125;
+&#125;
+
+
+void main(void) &#123;
+    board_init();
+
+    usart0_init(115200);
+
+    tos_knl_init();
+
+
+    tos_task_create(&amp;k_task_task1, &quot;task1&quot;, task1, NULL, 3, k_task1_stk, TASK_SIZE, 0);
+    tos_task_create(&amp;k_task_task2, &quot;task2&quot;, task2, NULL, 3, k_task2_stk, TASK_SIZE, 0);
+    k_err_t err &#x3D; tos_sem_create(&amp;sem, 1);
+    if (err !&#x3D; K_ERR_NONE) &#123;
+        goto die;
+    &#125;
+    tos_knl_start();
+die:
+    while (1) &#123;
+        asm(&quot;wfi;&quot;);
+    &#125;
+&#125;
+int _put_char(int ch)
+&#123;
+    usart_data_transmit(USART0, (uint8_t) ch );
+    while (usart_flag_get(USART0, USART_FLAG_TBE)&#x3D;&#x3D; RESET)&#123;
+    &#125;
+    return ch;
+&#125;</code></pre>
+<ul>
+<li>参考<a target="_blank" rel="noopener" href="https://github.com/riscv/riscv-isa-manual/releases">https://github.com/riscv/riscv-isa-manual/releases</a></li>
+</ul>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>由于是普通校赛，题目也没出过分难，个人感觉难以把握还算可以。这次题目主要也本着打破传统scuctf 常规题目，一丢丢小小的创新。 .NET，risc-v，ollvm，apk，python等。即使这些可能在全国ctf中是常见题目，但是感觉校内还是几乎没出的。比赛过程中也发生了很多趣味东西，比如第一题一题多解，flag设置时候多加了空格导致选手提交报错等好多问题。</p>
+<p>总之希望scuctf越来越有趣，参与人数越来越多吧！</p>
+</div><div id="reward-container"><span class="hty-icon-button button-glow" id="reward-button" title="打赏" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === &quot;none&quot;) ? &quot;block&quot; : &quot;none&quot;;"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-hand-coin-line"></use></svg></span><div id="reward-comment">谢谢老板~</div><div id="qr" style="display:none;"><div style="display:inline-block"><a href="/images/alipay.jpg"><img loading="lazy" src="/images/alipay.jpg" alt="支付宝" title="支付宝"></a><div><span style="color:#00A3EE"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-alipay-line"></use></svg></span></div></div><div style="display:inline-block"><a href="/images/qq.jpg"><img loading="lazy" src="/images/qq.jpg" alt="QQ 支付" title="QQ 支付"></a><div><span style="color:#12B7F5"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-qq-line"></use></svg></span></div></div><div style="display:inline-block"><a href="/images/wechat.png"><img loading="lazy" src="/images/wechat.png" alt="微信支付" title="微信支付"></a><div><span style="color:#2DC100"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-wechat-pay-line"></use></svg></span></div></div></div></div><ul class="post-copyright"><li class="post-copyright-author"><strong>本文作者：</strong>Minhal</li><li class="post-copyright-link"><strong>本文链接：</strong><a href="https://www.minhal.me/2020/05/23/geekgame(scuctf)/" title="2020 geekgame(scuctf) Reverse出题思路&amp;writeup">https://www.minhal.me/2020/05/23/geekgame(scuctf)/</a></li><li class="post-copyright-license"><strong>版权声明：</strong>本博客所有文章除特别声明外，均默认采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 "><svg class="icon"><use xlink:href="#icon-creative-commons-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-by-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-nc-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-sa-line"></use></svg></a> 许可协议。</li></ul></section></article><div class="post-nav"><div class="post-nav-item"><a class="post-nav-prev" href="/2020/06/02/RCTF-cipher/" rel="prev" title="RCTF cipher"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-left-s-line"></use></svg><span class="post-nav-text">RCTF cipher</span></a></div><div class="post-nav-item"><a class="post-nav-next" href="/2020/05/08/hexo-github-zeit-Blog/" rel="next" title="hexo+github+zeit Blog"><span class="post-nav-text">hexo+github+zeit Blog</span><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-right-s-line"></use></svg></a></div></div></div><div id="comment"><div class="comment-tooltip text-center"><span>若您想及时得到回复提醒，建议通过邮件联系。</span><br></div><div id="tcomment"></div><script src="https://cdn.jsdelivr.net/npm/twikoo@latest/dist/twikoo.all.min.js"></script><script>const twikooConfig = {"enable":true,"envId":"minhalblog-6gxuecky4e7cffab","region":null,"option":null}
+twikooConfig.el = '#tcomment'
+twikoo.init(twikooConfig)</script></div></main><footer class="sidebar-translate" id="footer"><div class="copyright"><span>&copy; 2019 – 2022 </span><span class="with-love" id="animate"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-cloud-line"></use></svg></span><span class="author"> Minhal</span></div><div class="powered"><span>由 <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> 驱动 v5.3.0</span><span class="footer-separator">|</span><span>主题 - <a rel="noopener" href="https://github.com/YunYouJun/hexo-theme-yun" target="_blank"><span>Yun</span></a> v1.4.0</span></div><div class="live_time"><span>本博客已稳定运行</span><span id="display_live_time"></span><span class="moe-text">(●'◡'●)</span><script>function blog_live_time() {
+  setTimeout(blog_live_time, 1000);
+  const start = new Date('2019-01-01T00:00:00');
+  const now = new Date();
+  const timeDiff = (now.getTime() - start.getTime());
+  const msPerMinute = 60 * 1000;
+  const msPerHour = 60 * msPerMinute;
+  const msPerDay = 24 * msPerHour;
+  const passDay = Math.floor(timeDiff / msPerDay);
+  const passHour = Math.floor((timeDiff % msPerDay) / 60 / 60 / 1000);
+  const passMinute = Math.floor((timeDiff % msPerHour) / 60 / 1000);
+  const passSecond = Math.floor((timeDiff % msPerMinute) / 1000);
+  display_live_time.innerHTML = " " + passDay + " 天 " + passHour + " 小时 " + passMinute + " 分 " + passSecond + " 秒";
+}
+blog_live_time();
+</script></div></footer><a class="hty-icon-button" id="goUp" aria-label="back-to-top" href="#"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-up-s-line"></use></svg><svg class="progress-circle-container" viewBox="0 0 100 100"><circle class="progress-circle" id="progressCircle" cx="50" cy="50" r="48" fill="none" stroke="#0078E7" stroke-width="2" stroke-linecap="round"></circle></svg></a><a class="popup-trigger hty-icon-button icon-search" id="search" href="javascript:;" title="搜索"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-search-line"></use></svg></span></a><script>window.addEventListener("DOMContentLoaded", () => {
+  // Handle and trigger popup window
+  document.querySelector(".popup-trigger").addEventListener("click", () => {
+    document.querySelector(".popup").classList.add("show");
+    setTimeout(() => {
+      document.querySelector(".search-input").focus();
+    }, 100);
+  });
+
+  // Monitor main search box
+  const onPopupClose = () => {
+    document.querySelector(".popup").classList.remove("show");
+  };
+
+  document.querySelector(".popup-btn-close").addEventListener("click", () => {
+    onPopupClose();
+  });
+
+  window.addEventListener("keyup", event => {
+    if (event.key === "Escape") {
+      onPopupClose();
+    }
+  });
+});
+</script><script src="/js/search/local-search.js" defer></script><div class="popup search-popup"><div class="search-header"><span class="popup-btn-close close-icon hty-icon-button"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-close-line"></use></svg></span></div><div class="search-input-container"><input class="search-input" id="local-search-input" type="text" placeholder="搜索..." value=""></div><div id="local-search-result"></div></div></div></body></html>

@@ -128,6 +128,13 @@
 
   
   <url>
+    <loc>https://www.minhal.me/tags/%E5%B0%8F%E8%AE%B0/</loc>
+    <lastmod>2022-08-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
     <loc>https://www.minhal.me/tags/satellite/</loc>
     <lastmod>2022-08-07</lastmod>
     <changefreq>weekly</changefreq>
@@ -136,13 +143,6 @@
   
   <url>
     <loc>https://www.minhal.me/tags/protocol/</loc>
-    <lastmod>2022-08-07</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.minhal.me/tags/%E5%B0%8F%E8%AE%B0/</loc>
     <lastmod>2022-08-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>

@@ -1,39 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://www.minhal.me/2021/11/19/GSE/</loc>
+    <loc>https://blog.minhal.me/2022/02/01/2022_summary/</loc>
+    <lastmod>2023-02-13</lastmod>
+  </url>
+  <url>
+    <loc>https://blog.minhal.me/2021/11/19/GSE/</loc>
     <lastmod>2021-11-19</lastmod>
   </url>
   <url>
-    <loc>https://www.minhal.me/2020/11/07/android_studio_debugging_APP/</loc>
+    <loc>https://blog.minhal.me/2020/11/07/android_studio_debugging_APP/</loc>
     <lastmod>2021-10-16</lastmod>
   </url>
   <url>
-    <loc>https://www.minhal.me/2021/01/01/2020_summary/</loc>
+    <loc>https://blog.minhal.me/2021/01/01/2020_summary/</loc>
     <lastmod>2021-04-16</lastmod>
   </url>
   <url>
-    <loc>https://www.minhal.me/2021/04/06/frida/</loc>
+    <loc>https://blog.minhal.me/2021/04/06/frida/</loc>
     <lastmod>2021-04-06</lastmod>
   </url>
   <url>
-    <loc>https://www.minhal.me/2020/05/08/hexo-github-zeit-Blog/</loc>
+    <loc>https://blog.minhal.me/2020/05/08/hexo-github-zeit-Blog/</loc>
     <lastmod>2020-12-19</lastmod>
   </url>
   <url>
-    <loc>https://www.minhal.me/2020/05/07/hello%20word/</loc>
+    <loc>https://blog.minhal.me/2020/05/07/hello%20word/</loc>
     <lastmod>2020-12-19</lastmod>
   </url>
   <url>
-    <loc>https://www.minhal.me/2020/05/23/geekgame(scuctf)/</loc>
+    <loc>https://blog.minhal.me/2020/05/23/geekgame(scuctf)/</loc>
     <lastmod>2020-12-18</lastmod>
   </url>
   <url>
-    <loc>https://www.minhal.me/2020/05/07/github-picgo-typora/</loc>
+    <loc>https://blog.minhal.me/2020/05/07/github-picgo-typora/</loc>
     <lastmod>2020-12-01</lastmod>
   </url>
   <url>
-    <loc>https://www.minhal.me/2020/06/02/RCTF-cipher/</loc>
+    <loc>https://blog.minhal.me/2020/06/02/RCTF-cipher/</loc>
     <lastmod>2020-06-02</lastmod>
   </url>
 </urlset> 

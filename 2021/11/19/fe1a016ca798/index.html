@@ -1,0 +1,216 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#0078E7"><meta name="author" content="Minhal"><meta name="copyright" content="Minhal"><meta name="generator" content="Hexo 5.4.2"><meta name="theme" content="hexo-theme-yun"><title>GSE协议封装解析 | Minhal's Blog</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@900&amp;display=swap" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/star-markdown-css@0.3.3/dist/yun/yun-markdown.min.css"><link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/prism-theme-vars/base.css"><script src="https://fastly.jsdelivr.net/npm/scrollreveal/dist/scrollreveal.min.js" defer></script><script>function initScrollReveal() {
+  [".post-card",".markdown-body img"].forEach((target)=> {
+    ScrollReveal().reveal(target);
+  })
+}
+document.addEventListener("DOMContentLoaded", initScrollReveal);
+document.addEventListener("pjax:success", initScrollReveal);
+</script><link rel="icon" type="image/png" href="/favicon.ico"><link rel="mask-icon" href="/favicon.ico" color="#0078E7"><link rel="preload" href="/css/hexo-theme-yun.css" as="style"><link rel="prefetch" href="/js/sidebar.js" as="script"><link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><link rel="preconnect" href="https://fastly.jsdelivr.net/npm/" crossorigin><script id="yun-config">
+    window.Yun = {}
+    window.CONFIG = {"hostname":"blog.minhal.me","root":"/","title":["Minhalの","Blog"],"version":"1.10.6","mode":"auto","copycode":true,"page":{"isPost":true},"i18n":{"placeholder":"搜索...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）"},"anonymous_image":"https://cdn.yunyoujun.cn/img/avatar/none.jpg","local_search":{"path":"/search.xml"},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"fireworks":{"colors":null},"waline":{"config":{"enable":true,"serverURL":"https://comment-virid.vercel.app/","comment":false,"el":"#waline","lang":"zh-CN"},"cdn":"https://fastly.jsdelivr.net/npm/@waline/client@v2/dist/waline.js","dark":"html.dark"},"vendors":{"host":"https://fastly.jsdelivr.net/npm/","darken":"https://fastly.jsdelivr.net/npm/darken@1.5.0"}};
+  </script><link rel="stylesheet" href="/css/hexo-theme-yun.css"><script src="/js/hexo-theme-yun.js" type="module"></script><link rel="alternate" href="/atom.xml" title="Minhal's Blog" type="application/atom+xml"><link rel="stylesheet" href="/css/custom.css"><link rel="preconnect" href="https://www.google-analytics.com" crossorigin><script async src="https://www.googletagmanager.com/gtag/js?id=G-FJFJYWFMT3"></script><script>if (CONFIG.hostname === location.hostname) {
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-FJFJYWFMT3');
+}</script><script>(function(){
+  var bp = document.createElement('script');
+  var curProtocol = window.location.protocol.split(':')[0];
+  if (curProtocol === 'https') {
+    bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+  }
+  else {
+    bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+  }
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(bp, s);
+})();</script><!-- Google Tag Manager --><script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-M9KWR9L');</script><!-- End Google Tag Manager --><meta name="description" content="GSE协议封装的学习笔记。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="GSE协议封装解析">
+<meta property="og:url" content="https://blog.minhal.me/2021/11/19/fe1a016ca798/index.html">
+<meta property="og:site_name" content="Minhal&#39;s Blog">
+<meta property="og:description" content="GSE协议封装的学习笔记。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://photo-1302246897.cos.ap-singapore.myqcloud.com/blog/20211119115001.png">
+<meta property="og:image" content="https://photo-1302246897.cos.ap-singapore.myqcloud.com/blog/20211119115136.png">
+<meta property="og:image" content="https://photo-1302246897.cos.ap-singapore.myqcloud.com/blog/20211119115151.png">
+<meta property="og:image" content="https://photo-1302246897.cos.ap-singapore.myqcloud.com/blog/20211119115152.png">
+<meta property="og:image" content="https://photo-1302246897.cos.ap-singapore.myqcloud.com/blog/20211119115153.png">
+<meta property="og:image" content="https://photo-1302246897.cos.ap-singapore.myqcloud.com/blog/20211119115154.png">
+<meta property="article:published_time" content="2021-11-19T03:11:27.000Z">
+<meta property="article:modified_time" content="2023-03-18T10:00:27.655Z">
+<meta property="article:author" content="Minhal">
+<meta property="article:tag" content="satellite">
+<meta property="article:tag" content="protocol">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://photo-1302246897.cos.ap-singapore.myqcloud.com/blog/20211119115001.png"><script>(function() {
+  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+  const setting = localStorage.getItem('darken-mode') || 'auto'
+  if (setting === 'dark' || (prefersDark && setting !== 'light'))
+    document.documentElement.classList.toggle('dark', true)
+})()</script></head><body><script src="https://code.iconify.design/2/2.1.1/iconify.min.js"></script><script>// Define global variable
+IconifyProviders = {
+  // Empty prefix: overwrite default API provider configuration
+  '': {
+    // Use custom API first, use Iconify public API as backup
+    resources: [
+        'https://api.iconify.design',
+    ],
+    // Wait for 1 second before switching API hosts
+    rotate: 1000,
+  },
+};</script><script defer src="https://fastly.jsdelivr.net/npm/animejs@latest"></script><script defer src="/js/ui/fireworks.js" type="module"></script><canvas class="fireworks"></canvas><div class="container"><a class="sidebar-toggle hty-icon-button" id="menu-btn"><div class="hamburger hamburger--spin" type="button"><span class="hamburger-box"><span class="hamburger-inner"></span></span></div></a><div class="sidebar-toggle sidebar-overlay"></div><aside class="sidebar"><script src="/js/sidebar.js" type="module"></script><ul class="sidebar-nav"><li class="sidebar-nav-item sidebar-nav-toc hty-icon-button sidebar-nav-active" data-target="post-toc-wrap" title="文章目录"><span class="icon iconify" data-icon="ri:list-ordered"></span></li><li class="sidebar-nav-item sidebar-nav-overview hty-icon-button" data-target="site-overview-wrap" title="站点概览"><span class="icon iconify" data-icon="ri:passport-line"></span></li></ul><div class="sidebar-panel" id="site-overview-wrap"><div class="site-info fix-top"><a class="site-author-avatar" href="/about/" title="Minhal"><img width="96" loading="lazy" src="/images/avatar.jpg" alt="Minhal"></a><div class="site-author-name"><a href="/about/">Minhal</a></div><span class="site-name">Minhal's Blog</span><sub class="site-subtitle">不驰于空想，不骛于虚声</sub><div class="site-description">Mobile&Satellite&Vehicle</div></div><nav class="site-state"><a class="site-state-item hty-icon-button icon-home" href="/" title="首页"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:home-4-line"></span></span></a><div class="site-state-item"><a href="/archives/" title="归档"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:archive-line"></span></span><span class="site-state-item-count">11</span></a></div><div class="site-state-item"><a target="_blank" rel="noopener" href="https://minhal.me"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ic:baseline-person"></span></span></a></div><div class="site-state-item"><a href="/tags/" title="标签"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:price-tag-3-line"></span></span><span class="site-state-item-count">9</span></a></div><a class="site-state-item hty-icon-button" href="/links/" title="我的小伙伴们"><span class="site-state-item-icon"><span class="icon iconify" data-icon="carbon:friendship"></span></span></a></nav><hr style="margin-bottom:0.5rem"><div class="links-of-author"><a class="links-of-author-item hty-icon-button" rel="noopener" href="/atom.xml" title="RSS" target="_blank" style="color:orange"><span class="icon iconify" data-icon="ri:rss-line"></span></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://github.com/loveminhal" title="GitHub" target="_blank" style="color:#6e5494"><span class="icon iconify" data-icon="ri:github-line"></span></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://www.zhihu.com/people/minhal" title="知乎" target="_blank" style="color:#0084FF"><span class="icon iconify" data-icon="ri:zhihu-line"></span></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://twitter.com/BestMinhal" title="Twitter" target="_blank" style="color:#1da1f2"><span class="icon iconify" data-icon="ri:twitter-line"></span></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://t.me/LoveMinhal" title="Telegram" target="_blank" style="color:#0088CC"><span class="icon iconify" data-icon="ri:telegram-line"></span></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="mailto:m@minhal.me" title="E-Mail" target="_blank" style="color:#8E71C1"><span class="icon iconify" data-icon="ri:mail-line"></span></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://discord.gg/nd3mPkU5j8" title="Discord" target="_blank" style="color:#5A6DE2"><span class="icon iconify" data-icon="ri:discord-line"></span></a></div><br><a class="links-item hty-icon-button" id="toggle-mode-btn" href="javascript:;" title="Mode" style="color: #f1cb64"><span class="icon iconify" data-icon="ri:contrast-2-line"></span></a></div><div class="sidebar-panel sidebar-panel-active" id="post-toc-wrap"><div class="post-toc"><div class="post-toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#GSE%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.</span> <span class="toc-text">GSE介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%81%E8%A3%85%E6%96%B9%E6%B3%95"><span class="toc-number">2.</span> <span class="toc-text">封装方法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#CRC-32"><span class="toc-number">2.1.</span> <span class="toc-text">CRC-32</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%AD%97%E6%AE%B5"><span class="toc-number">2.2.</span> <span class="toc-text">数据字段</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E6%9E%90%E6%B5%81%E7%A8%8B%E5%9B%BE"><span class="toc-number">3.</span> <span class="toc-text">解析流程图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PDU%E5%88%86%E7%89%87"><span class="toc-number">4.</span> <span class="toc-text">PDU分片</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%A6%96%E5%8C%85"><span class="toc-number">4.1.</span> <span class="toc-text">首包</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%AD%E9%97%B4%E5%8C%85"><span class="toc-number">4.2.</span> <span class="toc-text">中间包</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%BE%E5%8C%85"><span class="toc-number">4.3.</span> <span class="toc-text">尾包</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%81%E8%A3%85%E5%99%A8%E8%B0%83%E5%BA%A6"><span class="toc-number">5.</span> <span class="toc-text">封装器调度</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">6.</span> <span class="toc-text">参考</span></a></li></ol></div></div></div></aside><main class="sidebar-translate" id="content"><div id="post"><article class="hty-card post-block" itemscope itemtype="https://schema.org/Article" style="--smc-primary:#0078E7;"><link itemprop="mainEntityOfPage" href="https://blog.minhal.me/2021/11/19/fe1a016ca798/"><span hidden itemprop="author" itemscope itemtype="https://schema.org/Person"><meta itemprop="name" content="Minhal"><meta itemprop="description"></span><span hidden itemprop="publisher" itemscope itemtype="https://schema.org/Organization"><meta itemprop="name" content="Minhal's Blog"></span><header class="post-header"><h1 class="post-title" itemprop="name headline">GSE协议封装解析<a class="post-edit-link" href="https://github.com/YunYouJun/yunyoujun.github.io/tree/hexo/source/_posts/GSE.md" target="_blank" title="编辑" rel="noopener"><span class="icon iconify" data-icon="ri:edit-line"></span></a></h1><div class="post-meta"><div class="post-time" style="display:block"><span class="post-meta-item-icon"><span class="icon iconify" data-icon="ri:calendar-line"></span></span> <time title="创建时间：2021-11-19 11:11:27" itemprop="dateCreated datePublished" datetime="2021-11-19T11:11:27+08:00">2021-11-19</time></div><span class="post-count"><span class="post-symbolcount"><span class="post-meta-item-icon" title="本文字数"><span class="icon iconify" data-icon="ri:file-word-line"></span></span> <span title="本文字数">1.6k</span><span class="post-meta-divider">-</span><span class="post-meta-item-icon" title="阅读时长"><span class="icon iconify" data-icon="ri:timer-line"></span></span> <span title="阅读时长">5m</span></span></span><div class="post-classify"><span class="post-tag"><a class="tag-item" href="/tags/satellite/" style="--text-color:var(--hty-text-color)"><span class="post-meta-item-icon"><span class="icon iconify" data-icon="ri:price-tag-3-line"></span></span><span class="tag-name">satellite</span></a><a class="tag-item" href="/tags/protocol/" style="--text-color:var(--hty-text-color)"><span class="post-meta-item-icon"><span class="icon iconify" data-icon="ri:price-tag-3-line"></span></span><span class="tag-name">protocol</span></a></span></div></div></header><section class="post-body" itemprop="articleBody"><div class="post-content markdown-body"><p>GSE协议封装的学习笔记。</p>
+<span id="more"></span>
+
+<h2 id="GSE介绍"><a href="#GSE介绍" class="headerlink" title="GSE介绍"></a>GSE介绍</h2><p>卫星通信近几年逐渐火热，目前的低轨卫星通信大多数采用欧盟ETSI的数字卫星电视广播标准（DVB-S&#x2F;DVB-S2 &#x2F;S2X）并做改进。而通常它们用通用流封装，因此，在卫星安全的研究中，对一些数据的解析需要对GSE封装协议有所了解，所以近期对官方文档阅读并做出一些笔记。</p>
+<p>通用流封装（GSE）协议可以在物理层对IP和其他网络层数据封装，在通用流上提供网络层数据包封装和分片功能。GSE 不仅可以灵活的分片和封装，而且能使用智能调度器来优化系统性能。不仅如此还：</p>
+<ul>
+<li>支持多协议封装(IPv4、IPv6、MPEG、ATM、以太网、802.1pQ VLANs 等)。</li>
+<li>对网络层功能的透明性。</li>
+<li>支持多种寻址模式。</li>
+<li>可扩展性</li>
+</ul>
+<h2 id="封装方法"><a href="#封装方法" class="headerlink" title="封装方法"></a>封装方法</h2><p>PDU（协议数据单元）可以封装在一个GSE包中，也可以分成片段封装成几个GSE包。而GSE包的长度是动态可变的。GSE包可在不同基带桢中发送，基带桢长度是可变的。GSE没有独自的完整性校验机制。通常一段数据碎片化变成几个PDU片段，在最后一段加CRC-32。如图是DVB协议的GSE封装：</p>
+<p><img src="https://photo-1302246897.cos.ap-singapore.myqcloud.com/blog/20211119115001.png" loading="lazy"></p>
+<p>GSE包的头由固定长度（2bytes）和可变长度组成（0-11bytes）。固定长度主要有S 、E 、LT 、GSE Length等字段，可变部分主要是Fragment ID、Total Length、Protocol Type和Label等字段。如下图：</p>
+<p><img src="https://photo-1302246897.cos.ap-singapore.myqcloud.com/blog/20211119115136.png" loading="lazy"></p>
+<p>每个GS流可存放最多256个PDU碎片，每个GSE数据包的头有一个开始指示位（S）和结束指示位（E），开始指示位为“1”表示PDU开始，结束指示位为“1”表示PDU结束。如果都为1表示是一个完整的PDU。</p>
+<p>而接下来有两位标签类型指示（主要用于寻址）。标签存在时，接收者可以删去标签不匹配的数据包。当为广播包时，接收者都应该处理该数据包。标签重复时，只有上一个GSE包的地址与现在匹配，接收者才去处理。所以标签重复主要用于同一个基带桢中。</p>
+<table>
+<thead>
+<tr>
+<th>变量</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>00</td>
+<td>存在一个6字节标签</td>
+</tr>
+<tr>
+<td>01</td>
+<td>存在一个3字节标签</td>
+</tr>
+<tr>
+<td>10</td>
+<td>广播，不存在标签字段。</td>
+</tr>
+<tr>
+<td>11</td>
+<td>标签重复试用</td>
+</tr>
+</tbody></table>
+<p>接下来12位表示GSE包长度，最大2^12（4kb）。注：End包最后包含CRC-32。</p>
+<p>Fragment ID只会在中间包出现，同一个PDU的GSE包有相同的ID。所以只有一个PDU传输完成，才可以有另一个PDU使用这个ID。</p>
+<ul>
+<li>含有同一PDU数据的GSE包必须用相同Frag ID</li>
+<li>第一个 GSE 数据包的 S 位应等于 “1”，E 位等于 “0”。</li>
+<li>中间PDU片段 S 位和 E 位等于 “0”。</li>
+<li>最后一个 GSE 数据包的 S 位应等于 “0”，E 位等于 “1”。</li>
+<li>一个 PDU 没穿完，它的 Frag ID 不得重复使用。</li>
+<li>具有相同片段 ID 的 GSE 数据包必须按顺序传输。</li>
+</ul>
+<p>Total Length这个是保存PDU的总长度，所以通常在PDU碎片的第一个包中才有。总长度最高65536个字节，CRC-32不包含其中。</p>
+<p>Protocol Type 0-0x5FF表示Next Header，0x600-0xFFFF表示 Ether Type。</p>
+<h3 id="CRC-32"><a href="#CRC-32" class="headerlink" title="CRC-32"></a>CRC-32</h3><p>为了防止PDU包的数据丢失，所以在PDU最后一个GSE包放入一个32位的CRC字段。定义的CRC多项式为</p>
+<p><img src="https://photo-1302246897.cos.ap-singapore.myqcloud.com/blog/20211119115151.png" loading="lazy"></p>
+<p> 初始累积器为0xFFFFFFFF。然后PDU的字节、总长度、协议类型、标签、扩展头等计算。</p>
+<h3 id="数据字段"><a href="#数据字段" class="headerlink" title="数据字段"></a>数据字段</h3><p>Protocol Type定义了扩展头，扩展头属于数据的一部分，所以数据段的数据结构如下</p>
+<p><img src="https://photo-1302246897.cos.ap-singapore.myqcloud.com/blog/20211119115152.png" loading="lazy"></p>
+<ul>
+<li><p>如果有可选扩展头，跟在GSE头之后</p>
+</li>
+<li><p>如果有强制性扩展头，跟在可选扩展头之后</p>
+</li>
+<li><p>PDU跟在强制扩展头之后。</p>
+</li>
+</ul>
+<p>上面三部分都不是必须有的。</p>
+<h2 id="解析流程图"><a href="#解析流程图" class="headerlink" title="解析流程图"></a>解析流程图</h2><p><img src="https://photo-1302246897.cos.ap-singapore.myqcloud.com/blog/20211119115153.png" loading="lazy"></p>
+<h2 id="PDU分片"><a href="#PDU分片" class="headerlink" title="PDU分片"></a>PDU分片</h2><h3 id="首包"><a href="#首包" class="headerlink" title="首包"></a>首包</h3><ul>
+<li>S 位设置1，E 位设置 0</li>
+<li>GSE 长度设置为计算出的字节数（包括数据的长度和片段 ID 字段、总长度字段、协议类型字段、标签字段和任何扩展头等长度）。</li>
+<li>将 Frag ID 设置为一个任意值。</li>
+<li>总长度字段设置为计算出的字节数，（PDU、协议类型字段、标签字段和扩展头的长度。）</li>
+<li>添加一个协议类型。</li>
+<li>添加标签字段。（如果需要）</li>
+<li>放入第一段PDU碎片数据。</li>
+<li>GSE包放入基带桢</li>
+</ul>
+<h3 id="中间包"><a href="#中间包" class="headerlink" title="中间包"></a>中间包</h3><p>（如果PDU分为2个以上碎片时）</p>
+<ul>
+<li>S 位设置0，E 位设置 0</li>
+<li>GSE 长度设置为计算出的字节数（包括数据的长度和片段 ID 字段长度）。</li>
+<li>将 Frag ID 设置为首包设置的值。</li>
+<li>放入一段PDU碎片数据。（按顺序放）</li>
+<li>GSE包放入基带桢</li>
+</ul>
+<h3 id="尾包"><a href="#尾包" class="headerlink" title="尾包"></a>尾包</h3><ul>
+<li>S 位设置0，E 位设置 1</li>
+<li>GSE 长度设置为计算出的字节数（包括数据的长度和片段 ID 字段、CRC-32字段长度）。</li>
+<li>将 Frag ID 设置为首包设置的值。</li>
+<li>总长度字段设置为计算出的字节数，（PDU、协议类型字段、标签字段和扩展头的长度。）</li>
+<li>放入最后一段PDU碎片数据，并加上CRC-32值。</li>
+<li>GSE包放入基带桢</li>
+</ul>
+<h2 id="封装器调度"><a href="#封装器调度" class="headerlink" title="封装器调度"></a>封装器调度</h2><p>GSE封装器中的调度器，在基带桢中是智能放置，以提高效率。</p>
+<p>如下图，PDU1、PDU2 和 PDU3 构成一个 PDU 序列，由调度器预先排定。（MODCOD 表示PDU 相关的调制格式和编码率）如果 MODCOD2 的效率高于 MODCOD1 的效率，那么我们应该采取 MODCOD1 对应的才会更稳定。PDU 被封装并由 GSE 封装器排入基带帧。</p>
+<p><img src="https://photo-1302246897.cos.ap-singapore.myqcloud.com/blog/20211119115154.png" loading="lazy"></p>
+<p>当 PDU 被分割时，像上图 PDU2 ，剩余的 PDU 片段被封装在一个独立的 GSE 包中，在下一个基带帧中传输。如果没有利用智能调度策略，PDU2剩余的包与PDU3的包封装在同一个基带桢里。基带桢不得不降级。而如下图操作，能实现更好的系统效率。 </p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p>本文主要参考 ETSI 官方协议文档。</p>
+</div></section><div id="reward-container"><span class="hty-icon-button button-glow" id="reward-button" title="打赏" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === &quot;none&quot;) ? &quot;block&quot; : &quot;none&quot;;"><span class="icon iconify" data-icon="ri:hand-coin-line"></span></span><div id="reward-comment">谢谢老板~</div><div id="qr" style="display:none;"><div style="display:inline-block"><a href="/images/alipay.jpg"><img loading="lazy" src="/images/alipay.jpg" alt="支付宝" title="支付宝"></a><div><span style="color:#00A3EE"><span class="icon iconify" data-icon="ri:alipay-line"></span></span></div></div><div style="display:inline-block"><a href="/images/qq.jpg"><img loading="lazy" src="/images/qq.jpg" alt="QQ 支付" title="QQ 支付"></a><div><span style="color:#12B7F5"><span class="icon iconify" data-icon="ri:qq-line"></span></span></div></div><div style="display:inline-block"><a href="/images/wechat.png"><img loading="lazy" src="/images/wechat.png" alt="微信支付" title="微信支付"></a><div><span style="color:#2DC100"><span class="icon iconify" data-icon="ri:wechat-pay-line"></span></span></div></div></div></div><ul class="post-copyright"><li class="post-copyright-author"><strong>本文作者：</strong>Minhal</li><li class="post-copyright-link"><strong>本文链接：</strong><a href="https://blog.minhal.me/2021/11/19/fe1a016ca798/" title="GSE协议封装解析">https://blog.minhal.me/2021/11/19/fe1a016ca798/</a></li><li class="post-copyright-license"><strong>版权声明：</strong>本博客所有文章除特别声明外，均默认采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 "><span class="icon iconify" data-icon="ri:creative-commons-line"></span><span class="icon iconify" data-icon="ri:creative-commons-by-line"></span><span class="icon iconify" data-icon="ri:creative-commons-nc-line"></span><span class="icon iconify" data-icon="ri:creative-commons-sa-line"></span></a> 许可协议。</li></ul><script>document.addEventListener('copy', function (event) {
+  const clipboardData = event.clipboardData || window.clipboardData;
+  if (!clipboardData) { return; }
+  const text = window.getSelection().toString();
+  if (text) {
+    event.preventDefault();
+    clipboardData.setData('text/plain', text + '\n\n本文作者：Minhal\n本文链接：https://blog.minhal.me/2021/11/19/fe1a016ca798/\n版权声明：本博客所有文章除特别声明外，均默认采用 CC BY-NC-SA 4.0 许可协议。');
+  }
+});</script></article><div class="post-nav"><div class="post-nav-item"><a class="post-nav-prev" href="/2022/02/01/a4799542133e/" rel="prev" title="2022总结与展望"><span class="icon iconify" data-icon="ri:arrow-left-s-line"></span><span class="post-nav-text">2022总结与展望</span></a></div><div class="post-nav-item"><a class="post-nav-next" href="/2021/04/06/6fb8ed7e4721/" rel="next" title="frida学习[持续更……]"><span class="post-nav-text">frida学习[持续更……]</span><span class="icon iconify" data-icon="ri:arrow-right-s-line"></span></a></div></div></div><div class="hty-card" id="comment"><div class="comment-tooltip text-center"><span>欢迎邮件联系我。</span><br></div><div id="waline"></div><link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/@waline/client@v2/dist/waline.css"><script>window.CONFIG.waline.config.path = "/2021/11/19/fe1a016ca798/"</script><div class="js-Pjax"><script src="/js/comments/waline.js" type="module" defer></script></div></div></main><footer class="sidebar-translate" id="footer"><div class="copyright"><span>&copy; 2019 – 2023 </span><a class="with-love" id="animate" href="https://blog.minhal.me" title="Minhal"><span class="icon iconify" data-icon="ri:cloud-line"></span></a><span class="author"> Minhal</span></div><div class="live-time"><span>本博客已稳定运行</span><span id="display_live_time"></span><span class="moe-text">(●'◡'●)</span><script>function blog_live_time() {
+  setTimeout(blog_live_time, 1000);
+  const start = new Date('2019-01-01T00:00:00');
+  const now = new Date();
+  const timeDiff = (now.getTime() - start.getTime());
+  const msPerMinute = 60 * 1000;
+  const msPerHour = 60 * msPerMinute;
+  const msPerDay = 24 * msPerHour;
+  const passDay = Math.floor(timeDiff / msPerDay);
+  const passHour = Math.floor((timeDiff % msPerDay) / 60 / 60 / 1000);
+  const passMinute = Math.floor((timeDiff % msPerHour) / 60 / 1000);
+  const passSecond = Math.floor((timeDiff % msPerMinute) / 1000);
+  display_live_time.innerHTML = ` ${passDay} 天 ${passHour} 小时 ${passMinute} 分 ${passSecond} 秒`;
+}
+blog_live_time();
+</script></div></footer></div><a class="hty-icon-button" id="back-to-top" aria-label="back-to-top" href="#"><span class="icon iconify" data-icon="ri:arrow-up-s-line"></span><svg class="progress-circle-container" viewBox="0 0 100 100"><circle class="progress-circle" id="progressCircle" cx="50" cy="50" r="48" fill="none" stroke="#0078E7" stroke-width="2" stroke-linecap="round"></circle></svg></a><a class="popup-trigger hty-icon-button icon-search" id="search" href="javascript:;" title="搜索"><span class="site-state-item-icon"><span class="icon iconify" data-icon="ri:search-line"></span></span></a><script>window.addEventListener("DOMContentLoaded", () => {
+  // Handle and trigger popup window
+  document.querySelector(".popup-trigger").addEventListener("click", () => {
+    document.querySelector(".popup").classList.add("show");
+    setTimeout(() => {
+      document.querySelector(".search-input").focus();
+    }, 100);
+  });
+
+  // Monitor main search box
+  const onPopupClose = () => {
+    document.querySelector(".popup").classList.remove("show");
+  };
+
+  document.querySelector(".popup-btn-close").addEventListener("click", () => {
+    onPopupClose();
+  });
+
+  window.addEventListener("keyup", event => {
+    if (event.key === "Escape") {
+      onPopupClose();
+    }
+  });
+});
+</script><script src="https://fastly.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js"></script><script src="/js/search/local-search.js" defer type="module"></script><div class="popup search-popup"><div class="search-header"><span class="popup-btn-close close-icon hty-icon-button"><span class="icon iconify" data-icon="ri:close-line"></span></span></div><div class="search-input-container"><input class="search-input" id="local-search-input" type="text" placeholder="搜索..." value=""></div><div class="search-result-container"></div></div><script>function initMourn() {
+  const date = new Date();
+  const today = (date.getMonth() + 1) + "-" + date.getDate()
+  const mourn_days = ["4-4","9-18"]
+  if (mourn_days.includes(today)) {
+    document.documentElement.style.filter = "grayscale(1)";
+  }
+}
+initMourn();</script></body></html>
